@@ -4,7 +4,7 @@ namespace TikTokExplode
 {
     public class TikTokClient
     {
-        public Publication Publications { get; }
+        public PublicationClient Publications { get; }
 
         private HttpClient _httpClient;
 
