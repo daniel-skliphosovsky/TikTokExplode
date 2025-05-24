@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Publication\Author\" />
+    <None Remove="Publications\Statistics\" />
+    <None Remove="Publications\Image\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Publications\Statistics\" />
+    <Folder Include="Publications\Image\" />
+  </ItemGroup>
+</Project>
