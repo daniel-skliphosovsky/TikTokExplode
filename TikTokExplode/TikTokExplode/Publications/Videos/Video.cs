@@ -1,4 +1,4 @@
-﻿namespace TikTokExplode.Publications.Video
+﻿namespace TikTokExplode.Publications.Videos
 {
 	public class Video
 	{

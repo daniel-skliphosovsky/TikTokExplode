@@ -1,4 +1,4 @@
-﻿namespace TikTokExplode.Publications.Author
+﻿namespace TikTokExplode.Publications.Authors
 {
 	public class Author
 	{

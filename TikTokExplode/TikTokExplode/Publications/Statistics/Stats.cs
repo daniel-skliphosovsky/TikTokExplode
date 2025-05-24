@@ -1,6 +1,6 @@
 ﻿namespace TikTokExplode.Publications.Statistics
 {
-	public class Statistics
+	public class Stats
 	{
 		public ulong CommentCount { get; set; }
 

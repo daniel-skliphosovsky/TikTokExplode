@@ -9,10 +9,12 @@
   <ItemGroup>
     <None Remove="Publication\Author\" />
     <None Remove="Publications\Statistics\" />
-    <None Remove="Publications\Image\" />
+    <None Remove="Exceptions\" />
+    <None Remove="Publications\Images\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Publications\Statistics\" />
-    <Folder Include="Publications\Image\" />
+    <Folder Include="Exceptions\" />
+    <Folder Include="Publications\Images\" />
   </ItemGroup>
 </Project>
