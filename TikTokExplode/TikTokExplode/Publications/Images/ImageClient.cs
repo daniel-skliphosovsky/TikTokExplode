@@ -10,7 +10,7 @@ namespace TikTokExplode.Publications.Images
         {
             string fullUrl = WebRequestsHandler.GetFullUrl(publicationUrl).Result;
 
-            if (!WebRequestsHandler.IsUrlValid(fullUrl).Result && fullUrl.Contains("/photo/"))
+            if (!(WebRequestsHandler.IsUrlValid(fullUrl).Result && fullUrl.Contains("/photo/")))
                 throw new TikTokExplodeException("Invalid URL");
 
             string apiResponse = new WebRequestsHandler().GetApiResponse(fullUrl).Result;

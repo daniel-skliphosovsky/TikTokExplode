@@ -2,21 +2,21 @@
 using TikTokExplode.Extractors;
 using TikTokExplode.WebRequester;
 
-namespace TikTokExplode.Publications.Videos
+namespace TikTokExplode.Publications.Musics
 {
-	public partial class VideoClient
+	public class MusicClient
 	{
-		public Video GetAsync(string publicationUrl)
-		{
+        public Music GetAsync(string publicationUrl)
+        {
             string fullUrl = WebRequestsHandler.GetFullUrl(publicationUrl).Result;
 
-            if (!(WebRequestsHandler.IsUrlValid(fullUrl).Result && fullUrl.Contains("/video/")))
+            if (!(WebRequestsHandler.IsUrlValid(fullUrl).Result && (fullUrl.Contains("/video/") || fullUrl.Contains("/photo/"))))
                 throw new TikTokExplodeException("Invalid URL");
 
             string apiResponse = new WebRequestsHandler().GetApiResponse(fullUrl).Result;
 
             ApiExtractor apiExtractor = new ApiExtractor();
-            Video video = new Video()
+            Music video = new Music()
             {
                 Url = apiExtractor.ExtractVideoUrl(apiResponse),
                 Width = apiExtractor.ExtractVideoWidth(apiResponse),
@@ -24,8 +24,8 @@ namespace TikTokExplode.Publications.Videos
                 Duration = apiExtractor.ExtractVideoDuration(apiResponse)
             };
 
-            return video;
-		}
+            return Music;
+        }
     }
 }
 
