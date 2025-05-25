@@ -11,10 +11,12 @@
     <None Remove="Publications\Statistics\" />
     <None Remove="Exceptions\" />
     <None Remove="Publications\Images\" />
+    <None Remove="WebRequester\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Publications\Statistics\" />
     <Folder Include="Exceptions\" />
     <Folder Include="Publications\Images\" />
+    <Folder Include="WebRequester\" />
   </ItemGroup>
 </Project>

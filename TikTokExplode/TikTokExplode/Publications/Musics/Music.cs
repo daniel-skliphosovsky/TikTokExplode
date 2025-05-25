@@ -1,4 +1,4 @@
-﻿namespace TikTokExplode.Publications.Music
+﻿namespace TikTokExplode.Publications.Musics
 {
 	public class Music
 	{

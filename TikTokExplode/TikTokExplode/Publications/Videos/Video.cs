@@ -8,7 +8,7 @@
 
 		public int Height { get; set; }
 
-		public int Ratio { get; set; }
+		public ulong Duration { get; set; }
 	}
 }
 

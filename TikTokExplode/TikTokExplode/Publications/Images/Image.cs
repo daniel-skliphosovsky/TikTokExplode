@@ -1,4 +1,4 @@
-﻿namespace TikTokExplode.Publications.Image
+﻿namespace TikTokExplode.Publications.Images
 {
 	public class Image
 	{
