@@ -36,13 +36,13 @@ namespace TikTokExplode.Publications.Videos
             try
             {
                 using JsonDocument doc = JsonDocument.Parse(apiResponse);
-                string videoWidth = doc.RootElement
+                int videoWidth = doc.RootElement
                                 .GetProperty("aweme_list")[0]
                                 .GetProperty("video")
                                 .GetProperty("play_addr")
-                                .GetProperty("width").GetString();
+                                .GetProperty("width").GetInt32();
 
-                return int.TryParse(videoWidth, out int width) ? int.Parse(videoWidth) : 0;
+                return videoWidth;
             }
             catch (Exception ex)
             {
@@ -55,12 +55,12 @@ namespace TikTokExplode.Publications.Videos
             try
             {
                 using JsonDocument doc = JsonDocument.Parse(apiResponse);
-                string videoHeight = doc.RootElement
+                int videoHeight = doc.RootElement
                                 .GetProperty("aweme_list")[0]
                                 .GetProperty("video")
-                                .GetProperty("height").GetString();
+                                .GetProperty("height").GetInt32();
 
-                return int.TryParse(videoHeight, out int height) ? int.Parse(videoHeight) : 0;
+                return videoHeight;
             }
             catch (Exception ex)
             {
@@ -73,12 +73,12 @@ namespace TikTokExplode.Publications.Videos
             try
             {
                 using JsonDocument doc = JsonDocument.Parse(apiResponse);
-                string videoDuration = doc.RootElement
+                ulong videoDuration = doc.RootElement
                                 .GetProperty("aweme_list")[0]
                                 .GetProperty("video")
-                                .GetProperty("duration").GetString();
+                                .GetProperty("duration").GetUInt64();
 
-                return ulong.TryParse(videoDuration, out ulong duration) ? ulong.Parse(videoDuration) : 0;
+                return videoDuration;
             }
             catch (Exception ex)
             {
