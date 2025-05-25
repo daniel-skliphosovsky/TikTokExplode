@@ -1,18 +1,11 @@
 ﻿using System.Text.Json;
-using System.Text.RegularExpressions;
 using TikTokExplode.Exceptions;
 
-namespace TikTokExplode.Publications.Videos
+namespace TikTokExplode.Extractors
 {
-	public partial class VideoClient
+	public partial class ApiExtractor
 	{
-	    private string ExtractVideoId(string url)
-        {
-            var match = Regex.Match(url, @"https:\/\/www\.tiktok\.com\/@[^/]+\/video\/(\d+)");
-            return match.Success ? match.Groups[1].Value : null;
-        }
-
-        private string ExtractVideoUrl(string apiResponse)
+        public string ExtractVideoUrl(string apiResponse)
         {
             try
             {
@@ -31,7 +24,7 @@ namespace TikTokExplode.Publications.Videos
             }
         }
 
-        private int ExtractVideoWidth(string apiResponse)
+        public int ExtractVideoWidth(string apiResponse)
         {
             try
             {
@@ -50,7 +43,7 @@ namespace TikTokExplode.Publications.Videos
             }
         }
 
-        private int ExtractVideoHeight(string apiResponse)
+        public int ExtractVideoHeight(string apiResponse)
         {
             try
             {
@@ -68,7 +61,7 @@ namespace TikTokExplode.Publications.Videos
             }
         }
 
-        private ulong ExtractVideoDuration(string apiResponse)
+        public ulong ExtractVideoDuration(string apiResponse)
         {
             try
             {

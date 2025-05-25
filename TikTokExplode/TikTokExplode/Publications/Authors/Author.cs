@@ -6,7 +6,7 @@
 
 		public string Nickname { get; set; }
 
-		public bool IsSignatured { get; set; }
+		public bool IsVerified { get; set; }
 
 		public string ThumbAvatarUrl { get; set; }
 

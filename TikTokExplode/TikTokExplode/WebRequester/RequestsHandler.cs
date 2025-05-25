@@ -10,7 +10,7 @@
         }
 
         //Thanks Xlinka (https://github.com/Xlinka) for public API app link 
-        private static string _apiUrl { get; } = "https://api22-normal-c-alisg.tiktokv.com/aweme/v1/feed/?aweme_id={videoId}&iid=7318518857994389254&device_id=7318517321748022790&channel=googleplay&app_name=musical_ly&version_code=300904&device_platform=android&device_type=ASUS_Z01QD&version=9";
+        private static string _apiUrl { get; } = "https://api22-normal-c-alisg.tiktokv.com/aweme/v1/feed/?aweme_id={awemeId}&iid=7318518857994389254&device_id=7318517321748022790&channel=googleplay&app_name=musical_ly&version_code=300904&device_platform=android&device_type=ASUS_Z01QD&version=9";
 
         private HttpClient CreateRandomHttpClient()
         {

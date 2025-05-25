@@ -1,4 +1,5 @@
 ﻿using TikTokExplode.Publications.Videos;
+using TikTokExplode.Publications.Authors;
 
 namespace TikTokExplode.Publications
 {
@@ -6,9 +7,12 @@ namespace TikTokExplode.Publications
     {
         public VideoClient Videos { get; set; }
 
+        public AuthorClient Authors { get; set; }
+
         public PublicationClient()
         {
             Videos = new VideoClient();
+            Authors = new AuthorClient();
         }
     }
 }
