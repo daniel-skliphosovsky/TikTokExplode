@@ -16,15 +16,18 @@ namespace TikTokExplode.Publications.Musics
             string apiResponse = new WebRequestsHandler().GetApiResponse(fullUrl).Result;
 
             ApiExtractor apiExtractor = new ApiExtractor();
-            Music video = new Music()
+            Music music = new Music()
             {
-                Url = apiExtractor.ExtractVideoUrl(apiResponse),
-                Width = apiExtractor.ExtractVideoWidth(apiResponse),
-                Height = apiExtractor.ExtractVideoHeight(apiResponse),
-                Duration = apiExtractor.ExtractVideoDuration(apiResponse)
+                Author = apiExtractor.ExtractMusicAuthor(apiResponse),
+                Title = apiExtractor.ExtractMusicTitle(apiResponse),
+                Id = apiExtractor.ExtractMusicId(apiResponse),
+                LargeCoverUrl = apiExtractor.ExtractMusicLargeCover(apiResponse),
+                MediumCoverUrl = apiExtractor.ExtractAuthorMediumAvatarUrl(apiResponse),
+                ThumbCoverUrl = apiExtractor.ExtractMusicThumbCover(apiResponse),
+                SoundUrl = apiExtractor.ExtractMusicSoundUrl(apiResponse)
             };
 
-            return Music;
+            return music;
         }
     }
 }

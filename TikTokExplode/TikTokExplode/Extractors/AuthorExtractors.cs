@@ -5,15 +5,15 @@ namespace TikTokExplode.Extractors
 {
 	public partial class ApiExtractor
 	{
-        public ulong ExtractAuthorUserId(string apiResponse)
+        public string ExtractAuthorUserId(string apiResponse)
         {
             try
             {
                 using JsonDocument doc = JsonDocument.Parse(apiResponse);
-                ulong userId = doc.RootElement
+                string userId = doc.RootElement
                                 .GetProperty("aweme_list")[0]
                                 .GetProperty("author")
-                                .GetProperty("uid").GetUInt64();
+                                .GetProperty("uid").GetString();
 
                 return userId;
             }

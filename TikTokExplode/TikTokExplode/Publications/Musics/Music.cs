@@ -2,7 +2,7 @@
 {
 	public class Music
 	{
-		public ulong Id { get; set; }
+		public string Id { get; set; }
 
 		public string Title { get; set; }
 
