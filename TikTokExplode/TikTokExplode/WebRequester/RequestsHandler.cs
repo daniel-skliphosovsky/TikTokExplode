@@ -6,16 +6,15 @@
 
         public WebRequestsHandler()
         {
-            _httpClient = CreateRandomHttpClient();
+            _httpClient = new HttpClient();
+            CreateRandomHttpHeaders();
         }
 
         //Thanks Xlinka (https://github.com/Xlinka) for public API app link 
         private static string _apiUrl { get; } = "https://api22-normal-c-alisg.tiktokv.com/aweme/v1/feed/?aweme_id={awemeId}&iid=7318518857994389254&device_id=7318517321748022790&channel=googleplay&app_name=musical_ly&version_code=300904&device_platform=android&device_type=ASUS_Z01QD&version=9";
 
-        private HttpClient CreateRandomHttpClient()
+        private void CreateRandomHttpHeaders()
         {
-            HttpClient httpClient = new HttpClient();
-
             string[] userAgents = new string[]
             {
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
@@ -29,9 +28,7 @@
             };
 
             string randomAgent = userAgents[new Random().Next(userAgents.Length)];
-            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(randomAgent);
-
-            return httpClient;
+            _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(randomAgent);
         }
     }
 }

@@ -7,22 +7,29 @@ namespace TikTokExplode.WebRequester
 {
 	public partial class WebRequestsHandler
 	{
-        public async Task<string> GetFullUrl(string url)
+        public async Task<string> GetFullUrlAsync(string url)
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(url))
+                    throw new TikTokExplodeException("Publication URL cannot be null or empty");
+
                 HttpWebRequest request = WebRequest.CreateHttp(url);
                 request.AllowAutoRedirect = true;
                 WebResponse response = await request.GetResponseAsync();
                 return response.ResponseUri.AbsoluteUri ?? null;
             }
-            catch
+            catch(TikTokExplodeException)
             {
-                return null;
+                throw;
+            }
+            catch(Exception ex)
+            {
+                throw new TikTokExplodeException("GetFulPath exception: " + ex);
             }
         }
 
-        public async Task<bool> IsUrlValid(string fullUrl, PublicationClient.PublicationType publicationType)
+        public async Task<bool> IsUrlValidAsync(string fullUrl, PublicationClient.PublicationType publicationType)
         {
             if (Regex.IsMatch(fullUrl, @"https:\/\/www\.tiktok\.com\/.+"))
             {

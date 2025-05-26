@@ -5,8 +5,10 @@ namespace TikTokExplode.WebRequester
 {
 	public partial class WebRequestsHandler
     {
-		public async Task<string> GetApiResponse(string fullUrl)
+		public async Task<string> GetApiResponseAsync(string fullUrl)
 		{
+            CreateRandomHttpHeaders();
+
             ApiExtractor apiExtractor = new ApiExtractor();
 
             string awemeId = apiExtractor.ExtractPublicationId(fullUrl);
@@ -20,7 +22,7 @@ namespace TikTokExplode.WebRequester
             if (response.IsSuccessStatusCode)
                 return content;
             else
-                throw new TikTokExplodeException("API request return failure Status Code");
+                throw new TikTokExplodeException($"API request return {(int)response.StatusCode} ({response.StatusCode})");
         }            
     }
 }

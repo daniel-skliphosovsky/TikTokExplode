@@ -19,19 +19,12 @@ namespace TikTokExplode.Publications.Authors
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(publicationUrl))
-                    throw new TikTokExplodeException("Publication URL cannot be null or empty");
+                string fullUrl = await _webRequestsHandler.GetFullUrlAsync(publicationUrl);
 
-                string fullUrl = await _webRequestsHandler.GetFullUrl(publicationUrl);
-
-                if (fullUrl == null)
-                    throw new TikTokExplodeException("WebRequester returned null or empty url");
-
-
-                if (!await _webRequestsHandler.IsUrlValid(fullUrl, PublicationClient.PublicationType.NoMetter))
+                if (!await _webRequestsHandler.IsUrlValidAsync(fullUrl, PublicationClient.PublicationType.NoMetter))
                     throw new TikTokExplodeException("Invalid URL");
 
-                string apiResponse = await _webRequestsHandler.GetApiResponse(fullUrl);
+                string apiResponse = await _webRequestsHandler.GetApiResponseAsync(fullUrl);
 
                 return new Author
                 {
