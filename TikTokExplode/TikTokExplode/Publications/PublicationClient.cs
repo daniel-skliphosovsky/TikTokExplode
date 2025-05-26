@@ -45,9 +45,9 @@ namespace TikTokExplode.Publications
             Unknown
         }
 
-        public PublicationType GetPublicationType(string url)
+        public async Task<PublicationType> GetPublicationType(string url)
         {
-            string fullurl = _webRequestsHandler.GetFullUrl(url).Result;
+            string fullurl = await _webRequestsHandler.GetFullUrl(url);
             return fullurl.Contains("/photo/") ? PublicationType.Images : fullurl.Contains("/video/") ? PublicationType.Video : PublicationType.Unknown;
         }
 
@@ -57,7 +57,7 @@ namespace TikTokExplode.Publications
             {
                 string fullUrl = await _webRequestsHandler.GetFullUrl(publicationUrl);
 
-                if (!(await _webRequestsHandler.IsUrlValid(fullUrl) && (fullUrl.Contains("/video/") || fullUrl.Contains("/photo/"))))
+                if (!await _webRequestsHandler.IsUrlValid(fullUrl, PublicationType.NoMetter))
                     throw new TikTokExplodeException("Invalid URL");
 
                 string apiResponse = await _webRequestsHandler.GetApiResponse(fullUrl);
@@ -65,10 +65,13 @@ namespace TikTokExplode.Publications
                 return new Publication
                 {
                     Author = await new AuthorClient().GetAsync(publicationUrl),
-                    Images = fullUrl.Contains("/photo/") ? await new ImageClient().GetAsync(publicationUrl) : null,
-                    Video = fullUrl.Contains("/video/") ? await new VideoClient().GetAsync(publicationUrl) : null,
+                    Images = await GetPublicationType(publicationUrl) == PublicationType.Images ? await new ImageClient().GetAsync(publicationUrl) : null,
+                    Video = await GetPublicationType(publicationUrl) == PublicationType.Video ? await new VideoClient().GetAsync(publicationUrl) : null,
                     Music = await new MusicClient().GetAsync(publicationUrl),
-                    Statistics = await new StatsClient().GetAsync(publicationUrl)
+                    Statistics = await new StatsClient().GetAsync(publicationUrl),
+                    Description = _apiExtractor.ExtractPublicationDescription(apiResponse),
+                    IsAds = _apiExtractor.ExtractPublicationIsAdsStatus(apiResponse),
+                    Id = _apiExtractor.ExtractPublicationId(fullUrl)
                 };
             }
             catch (TikTokExplodeException)

@@ -31,16 +31,16 @@ namespace TikTokExplode.WebRequester
                 switch (publicationType)
                 {
                     case PublicationClient.PublicationType.Video:
-                        if (publicationClient.GetPublicationType(fullUrl) == PublicationClient.PublicationType.Video)
+                        if (await publicationClient.GetPublicationType(fullUrl) == PublicationClient.PublicationType.Video)
                             return true;
                         else return false;
                     case PublicationClient.PublicationType.Images:
-                        if (publicationClient.GetPublicationType(fullUrl) == PublicationClient.PublicationType.Images)
+                        if (await publicationClient.GetPublicationType(fullUrl) == PublicationClient.PublicationType.Images)
                             return true;
                         else return false;
                     case PublicationClient.PublicationType.NoMetter:
-                        if (publicationClient.GetPublicationType(fullUrl) == PublicationClient.PublicationType.Images ||
-                            publicationClient.GetPublicationType(fullUrl) == PublicationClient.PublicationType.Video)
+                        if (await publicationClient.GetPublicationType(fullUrl) == PublicationClient.PublicationType.Images ||
+                            await publicationClient.GetPublicationType(fullUrl) == PublicationClient.PublicationType.Video)
                             return true;
                         else return false;
                     default:

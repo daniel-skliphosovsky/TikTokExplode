@@ -17,6 +17,12 @@ namespace TikTokExplode.Publications
 		public Music Music { get; set; }
 
 		public Stats Statistics { get; set; }
+
+		public bool IsAds { get; set; }
+
+		public string Description { get; set; }
+
+		public string Id { get; set; }
 	}
 }
 
