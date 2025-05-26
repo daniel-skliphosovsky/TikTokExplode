@@ -8,11 +8,13 @@ namespace TikTokExplode.Publications.Statistics
     {
         private readonly WebRequestsHandler _webRequestsHandler;
         private readonly ApiExtractor _apiExtractor;
+        private readonly PublicationClient _publicationClient;
 
         public StatsClient()
         {
             _webRequestsHandler = new WebRequestsHandler();
             _apiExtractor = new ApiExtractor();
+            _publicationClient = new PublicationClient();
         }
 
         public async Task<Stats> GetAsync(string publicationUrl)
@@ -21,7 +23,7 @@ namespace TikTokExplode.Publications.Statistics
             {
                 string fullUrl = await _webRequestsHandler.GetFullUrl(publicationUrl);
 
-                if (!(await _webRequestsHandler.IsUrlValid(fullUrl) && (fullUrl.Contains("/video/") || fullUrl.Contains("/photo/"))))
+                if (!await _webRequestsHandler.IsUrlValid(fullUrl, PublicationClient.PublicationType.NoMetter))
                     throw new TikTokExplodeException("Invalid URL");
 
                 string apiResponse = await _webRequestsHandler.GetApiResponse(fullUrl);

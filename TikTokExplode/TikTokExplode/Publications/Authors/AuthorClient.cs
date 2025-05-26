@@ -8,6 +8,7 @@ namespace TikTokExplode.Publications.Authors
     {
         private readonly WebRequestsHandler _webRequestsHandler;
         private readonly ApiExtractor _apiExtractor;
+        private readonly PublicationClient _publicationClient;
 
         public AuthorClient()
         {
@@ -21,7 +22,7 @@ namespace TikTokExplode.Publications.Authors
             {
                 string fullUrl = await _webRequestsHandler.GetFullUrl(publicationUrl);
 
-                if (!(await _webRequestsHandler.IsUrlValid(fullUrl) && (fullUrl.Contains("/video/") || fullUrl.Contains("/photo/"))))
+                if (!await _webRequestsHandler.IsUrlValid(fullUrl, PublicationClient.PublicationType.NoMetter))
                     throw new TikTokExplodeException("Invalid URL");
 
                 string apiResponse = await _webRequestsHandler.GetApiResponse(fullUrl);

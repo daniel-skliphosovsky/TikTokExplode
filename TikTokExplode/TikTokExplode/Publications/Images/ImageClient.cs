@@ -8,11 +8,13 @@ namespace TikTokExplode.Publications.Images
     {
         private readonly WebRequestsHandler _webRequestsHandler;
         private readonly ApiExtractor _apiExtractor;
+        private readonly PublicationClient _publicationClient;
 
         public ImageClient()
         {
             _webRequestsHandler = new WebRequestsHandler();
             _apiExtractor = new ApiExtractor();
+            _publicationClient = new PublicationClient();
         }
 
         public async Task<List<Image>> GetAsync(string publicationUrl)
@@ -21,7 +23,7 @@ namespace TikTokExplode.Publications.Images
             {
                 string fullUrl = await _webRequestsHandler.GetFullUrl(publicationUrl);
 
-                if (!(await _webRequestsHandler.IsUrlValid(fullUrl) && fullUrl.Contains("/photo/")))
+                if (!await _webRequestsHandler.IsUrlValid(fullUrl, PublicationClient.PublicationType.Images))
                     throw new TikTokExplodeException("Invalid URL");
 
                 string apiResponse = await _webRequestsHandler.GetApiResponse(fullUrl);
