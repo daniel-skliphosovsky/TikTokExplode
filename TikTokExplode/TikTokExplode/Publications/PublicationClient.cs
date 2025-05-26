@@ -47,7 +47,7 @@ namespace TikTokExplode.Publications
 
         public async Task<PublicationType> GetPublicationType(string url)
         {
-            string fullurl = await _webRequestsHandler.GetFullUrl(url);
+            string fullurl = await _webRequestsHandler.GetFullUrlAsync(url);
             return fullurl.Contains("/photo/") ? PublicationType.Images : fullurl.Contains("/video/") ? PublicationType.Video : PublicationType.Unknown;
         }
 
@@ -58,15 +58,15 @@ namespace TikTokExplode.Publications
                 if (string.IsNullOrWhiteSpace(publicationUrl))
                     throw new TikTokExplodeException("Publication URL cannot be null or empty");
 
-                string fullUrl = await _webRequestsHandler.GetFullUrl(publicationUrl);
+                string fullUrl = await _webRequestsHandler.GetFullUrlAsync(publicationUrl);
 
                 if (fullUrl == null)
                     throw new TikTokExplodeException("WebRequester returned null or empty url");
 
-                if (!await _webRequestsHandler.IsUrlValid(fullUrl, PublicationType.NoMetter))
+                if (!await _webRequestsHandler.IsUrlValidAsync(fullUrl, PublicationType.NoMetter))
                     throw new TikTokExplodeException("Invalid URL");
 
-                string apiResponse = await _webRequestsHandler.GetApiResponse(fullUrl);
+                string apiResponse = await _webRequestsHandler.GetApiResponseAsync(fullUrl);
 
                 return new Publication
                 {

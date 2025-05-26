@@ -19,12 +19,12 @@ namespace TikTokExplode.Publications.Images
         {
             try
             { 
-                string fullUrl = await _webRequestsHandler.GetFullUrl(publicationUrl);
+                string fullUrl = await _webRequestsHandler.GetFullUrlAsync(publicationUrl);
 
-                if (!await _webRequestsHandler.IsUrlValid(fullUrl, PublicationClient.PublicationType.Images))
+                if (!await _webRequestsHandler.IsUrlValidAsync(fullUrl, PublicationClient.PublicationType.Images))
                     throw new TikTokExplodeException("Invalid URL");
 
-                string apiResponse = await _webRequestsHandler.GetApiResponse(fullUrl);
+                string apiResponse = await _webRequestsHandler.GetApiResponseAsync(fullUrl);
                 int imageCount = _apiExtractor.ExtractImagesCount(apiResponse);
 
                 List<Image> images = new List<Image>(imageCount);

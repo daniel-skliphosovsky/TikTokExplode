@@ -19,12 +19,12 @@ namespace TikTokExplode.Publications.Musics
         {
             try
             {
-                string fullUrl = await _webRequestsHandler.GetFullUrl(publicationUrl);
+                string fullUrl = await _webRequestsHandler.GetFullUrlAsync(publicationUrl);
 
-                if (!await _webRequestsHandler.IsUrlValid(fullUrl, PublicationClient.PublicationType.NoMetter))
+                if (!await _webRequestsHandler.IsUrlValidAsync(fullUrl, PublicationClient.PublicationType.NoMetter))
                     throw new TikTokExplodeException("Invalid URL");
 
-                string apiResponse = await _webRequestsHandler.GetApiResponse(fullUrl);
+                string apiResponse = await _webRequestsHandler.GetApiResponseAsync(fullUrl);
 
                 return new Music
                 {

@@ -20,12 +20,12 @@ namespace TikTokExplode.Publications.Videos
         {
             try
             {
-                string fullUrl = await _webRequestsHandler.GetFullUrl(publicationUrl);
+                string fullUrl = await _webRequestsHandler.GetFullUrlAsync(publicationUrl);
 
-                if (!await _webRequestsHandler.IsUrlValid(fullUrl, PublicationClient.PublicationType.Video))
+                if (!await _webRequestsHandler.IsUrlValidAsync(fullUrl, PublicationClient.PublicationType.Video))
                     throw new TikTokExplodeException("Invalid URL");
 
-                string apiResponse = await _webRequestsHandler.GetApiResponse(fullUrl);
+                string apiResponse = await _webRequestsHandler.GetApiResponseAsync(fullUrl);
 
                 return new Video
                 {
