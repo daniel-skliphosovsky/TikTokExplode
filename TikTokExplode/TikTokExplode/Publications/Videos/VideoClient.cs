@@ -9,13 +9,11 @@ namespace TikTokExplode.Publications.Videos
     {
         private readonly WebRequestsHandler _webRequestsHandler;
         private readonly ApiExtractor _apiExtractor;
-        private readonly PublicationClient _publicationClient;
 
         public VideoClient()
         {
             _webRequestsHandler = new WebRequestsHandler();
             _apiExtractor = new ApiExtractor();
-            _publicationClient = new PublicationClient();
         }
 
         public async Task<Video> GetAsync(string publicationUrl)

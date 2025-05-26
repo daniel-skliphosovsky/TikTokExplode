@@ -8,7 +8,6 @@ namespace TikTokExplode.Publications.Authors
     {
         private readonly WebRequestsHandler _webRequestsHandler;
         private readonly ApiExtractor _apiExtractor;
-        private readonly PublicationClient _publicationClient;
 
         public AuthorClient()
         {

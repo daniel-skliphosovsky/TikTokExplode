@@ -8,13 +8,11 @@ namespace TikTokExplode.Publications.Statistics
     {
         private readonly WebRequestsHandler _webRequestsHandler;
         private readonly ApiExtractor _apiExtractor;
-        private readonly PublicationClient _publicationClient;
 
         public StatsClient()
         {
             _webRequestsHandler = new WebRequestsHandler();
             _apiExtractor = new ApiExtractor();
-            _publicationClient = new PublicationClient();
         }
 
         public async Task<Stats> GetAsync(string publicationUrl)
