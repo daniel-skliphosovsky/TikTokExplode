@@ -55,7 +55,13 @@ namespace TikTokExplode.Publications
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(publicationUrl))
+                    throw new TikTokExplodeException("Publication URL cannot be null or empty");
+
                 string fullUrl = await _webRequestsHandler.GetFullUrl(publicationUrl);
+
+                if (fullUrl == null)
+                    throw new TikTokExplodeException("WebRequester returned null or empty url");
 
                 if (!await _webRequestsHandler.IsUrlValid(fullUrl, PublicationType.NoMetter))
                     throw new TikTokExplodeException("Invalid URL");
@@ -80,7 +86,7 @@ namespace TikTokExplode.Publications
             }
             catch (Exception ex)
             {
-                throw new TikTokExplodeException($"Error retrieving author: {ex.Message}");
+                throw new TikTokExplodeException($"Error retrieving publication: {ex.Message}");
             }
         }
     }

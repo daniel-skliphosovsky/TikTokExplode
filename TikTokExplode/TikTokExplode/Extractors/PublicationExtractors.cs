@@ -9,7 +9,7 @@ namespace TikTokExplode.Extractors
 	    public string ExtractPublicationId(string url)
         {
             var match = Regex.Match(url, @"https:\/\/www\.tiktok\.com\/@[^/]+\/(video|photo)\/(\d+)");
-            return match.Success ? match.Groups[1].Value : null;
+            return match.Success ? match.Groups[2].Value : null;
         }
 
         private static JsonElement GetPublicationElement(string apiResponse)
@@ -18,7 +18,7 @@ namespace TikTokExplode.Extractors
             {
                 using JsonDocument doc = JsonDocument.Parse(apiResponse);
                 return doc.RootElement
-                    .GetProperty("aweme_list")[0];
+                    .GetProperty("aweme_list")[0].Clone();
             }
             catch (Exception ex)
             {

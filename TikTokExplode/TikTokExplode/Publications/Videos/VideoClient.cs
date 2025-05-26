@@ -20,7 +20,13 @@ namespace TikTokExplode.Publications.Videos
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(publicationUrl))
+                    throw new TikTokExplodeException("Publication URL cannot be null or empty");
+
                 string fullUrl = await _webRequestsHandler.GetFullUrl(publicationUrl);
+
+                if (fullUrl == null)
+                    throw new TikTokExplodeException("WebRequester returned null or empty url");
 
                 if (!await _webRequestsHandler.IsUrlValid(fullUrl, PublicationClient.PublicationType.Video))
                     throw new TikTokExplodeException("Invalid URL");

@@ -12,7 +12,7 @@ namespace TikTokExplode.Extractors
                 using JsonDocument doc = JsonDocument.Parse(apiResponse);
                 return doc.RootElement
                     .GetProperty("aweme_list")[0]
-                    .GetProperty("image_post_info");
+                    .GetProperty("image_post_info").Clone();
             }
             catch (Exception ex)
             {
