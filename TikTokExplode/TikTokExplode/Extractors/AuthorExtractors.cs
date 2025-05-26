@@ -3,99 +3,53 @@ using TikTokExplode.Exceptions;
 
 namespace TikTokExplode.Extractors
 {
-	public partial class ApiExtractor
-	{
-        public string ExtractAuthorUserId(string apiResponse)
+    public partial class ApiExtractor
+    {
+        private static JsonElement GetAuthorElement(string apiResponse)
         {
             try
             {
                 using JsonDocument doc = JsonDocument.Parse(apiResponse);
-                string userId = doc.RootElement
-                                .GetProperty("aweme_list")[0]
-                                .GetProperty("author")
-                                .GetProperty("uid").GetString();
-
-                return userId;
+                return doc.RootElement
+                    .GetProperty("aweme_list")[0]
+                    .GetProperty("author");
             }
             catch (Exception ex)
             {
                 throw new TikTokExplodeException($"Error parsing JSON response: {ex.Message}");
             }
+        }
+
+        public string ExtractAuthorUserId(string apiResponse)
+        {
+            JsonElement author = GetAuthorElement(apiResponse);
+            return author.GetProperty("uid").GetString();
         }
 
         public string ExtractAuthorNickname(string apiResponse)
         {
-            try
-            {
-                using JsonDocument doc = JsonDocument.Parse(apiResponse);
-                string nickname = doc.RootElement
-                                .GetProperty("aweme_list")[0]
-                                .GetProperty("author")
-                                .GetProperty("nickname").GetString();
-
-                return nickname;
-            }
-            catch (Exception ex)
-            {
-                throw new TikTokExplodeException($"Error parsing JSON response: {ex.Message}");
-            }
+            JsonElement author = GetAuthorElement(apiResponse);
+            return author.GetProperty("nickname").GetString();
         }
 
         public bool ExtractAuthorVerify(string apiResponse)
         {
-            try
-            {
-                using JsonDocument doc = JsonDocument.Parse(apiResponse);
-                string verify = doc.RootElement
-                                .GetProperty("aweme_list")[0]
-                                .GetProperty("author")
-                                .GetProperty("custom_verify").GetString();
-
-                return string.IsNullOrEmpty(verify) ? false : true;
-            }
-            catch (Exception ex)
-            {
-                throw new TikTokExplodeException($"Error parsing JSON response: {ex.Message}");
-            }
+            JsonElement author = GetAuthorElement(apiResponse);
+            string verify = author.GetProperty("custom_verify").GetString();
+            return !string.IsNullOrEmpty(verify);
         }
 
-        public string ExtractAuthorThumbAvatarUrl(string apiResponse)
+        private string ExtractAuthorAvatarUrl(string apiResponse, string avatarProperty)
         {
-            try
-            {
-                using JsonDocument doc = JsonDocument.Parse(apiResponse);
-                string avatarUrl = doc.RootElement
-                                .GetProperty("aweme_list")[0]
-                                .GetProperty("author")
-                                .GetProperty("avatar_thumb")
-                                .GetProperty("url_list")[2].GetString();
-
-                return avatarUrl;
-            }
-            catch (Exception ex)
-            {
-                throw new TikTokExplodeException($"Error parsing JSON response: {ex.Message}");
-            }
+            JsonElement author = GetAuthorElement(apiResponse);
+            JsonElement urlList = author.GetProperty(avatarProperty).GetProperty("url_list");
+            return urlList[urlList.GetArrayLength() - 1].GetString();
         }
 
-        public string ExtractAuthorMediumAvatarUrl(string apiResponse)
-        {
-            try
-            {
-                using JsonDocument doc = JsonDocument.Parse(apiResponse);
-                string avatarUrl = doc.RootElement
-                                .GetProperty("aweme_list")[0]
-                                .GetProperty("author")
-                                .GetProperty("avatar_medium")
-                                .GetProperty("url_list")[2].GetString();
+        public string ExtractAuthorThumbAvatarUrl(string apiResponse) =>
+            ExtractAuthorAvatarUrl(apiResponse, "avatar_thumb");
 
-                return avatarUrl;
-            }
-            catch (Exception ex)
-            {
-                throw new TikTokExplodeException($"Error parsing JSON response: {ex.Message}");
-            }
-        }
+        public string ExtractAuthorMediumAvatarUrl(string apiResponse) =>
+            ExtractAuthorAvatarUrl(apiResponse, "avatar_medium");
     }
 }
-

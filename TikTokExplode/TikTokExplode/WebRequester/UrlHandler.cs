@@ -5,7 +5,7 @@ namespace TikTokExplode.WebRequester
 {
 	public partial class WebRequestsHandler
 	{
-        public static async Task<string> GetFullUrl(string url)
+        public async Task<string> GetFullUrl(string url)
         {
             try
             {
@@ -20,7 +20,7 @@ namespace TikTokExplode.WebRequester
             }
         }
 
-        public static async Task<bool> IsUrlValid(string url)
+        public async Task<bool> IsUrlValid(string url)
         {
             return Regex.IsMatch(url, @"https:\/\/www\.tiktok\.com\/.+");
         }

@@ -1,31 +1,48 @@
-﻿using TikTokExplode.Exceptions;
+﻿using System.Threading.Tasks;
+using TikTokExplode.Exceptions;
 using TikTokExplode.Extractors;
 using TikTokExplode.WebRequester;
 
 namespace TikTokExplode.Publications.Videos
 {
-	public partial class VideoClient
-	{
-		public Video GetAsync(string publicationUrl)
-		{
-            string fullUrl = WebRequestsHandler.GetFullUrl(publicationUrl).Result;
+    public partial class VideoClient
+    {
+        private readonly WebRequestsHandler _webRequestsHandler;
+        private readonly ApiExtractor _apiExtractor;
 
-            if (!(WebRequestsHandler.IsUrlValid(fullUrl).Result && fullUrl.Contains("/video/")))
-                throw new TikTokExplodeException("Invalid URL");
+        public VideoClient()
+        {
+            _webRequestsHandler = new WebRequestsHandler();
+            _apiExtractor = new ApiExtractor();
+        }
 
-            string apiResponse = new WebRequestsHandler().GetApiResponse(fullUrl).Result;
-
-            ApiExtractor apiExtractor = new ApiExtractor();
-            Video video = new Video()
+        public async Task<Video> GetAsync(string publicationUrl)
+        {
+            try
             {
-                Url = apiExtractor.ExtractVideoUrl(apiResponse),
-                Width = apiExtractor.ExtractVideoWidth(apiResponse),
-                Height = apiExtractor.ExtractVideoHeight(apiResponse),
-                Duration = apiExtractor.ExtractVideoDuration(apiResponse)
-            };
+                string fullUrl = await _webRequestsHandler.GetFullUrl(publicationUrl);
 
-            return video;
-		}
+                if (!(await _webRequestsHandler.IsUrlValid(fullUrl) && fullUrl.Contains("/video/")))
+                    throw new TikTokExplodeException("Invalid URL");
+
+                string apiResponse = await _webRequestsHandler.GetApiResponse(fullUrl);
+
+                return new Video
+                {
+                    Url = _apiExtractor.ExtractVideoUrl(apiResponse),
+                    Width = _apiExtractor.ExtractVideoWidth(apiResponse),
+                    Height = _apiExtractor.ExtractVideoHeight(apiResponse),
+                    Duration = _apiExtractor.ExtractVideoDuration(apiResponse)
+                };
+            }
+            catch (TikTokExplodeException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new TikTokExplodeException($"Error retrieving video: {ex.Message}");
+            }
+        }
     }
 }
-

@@ -4,27 +4,44 @@ using TikTokExplode.WebRequester;
 
 namespace TikTokExplode.Publications.Statistics
 {
-	public class StatsClient
-	{
-        public Stats GetAsync(string publicationUrl)
+    public class StatsClient
+    {
+        private readonly WebRequestsHandler _webRequestsHandler;
+        private readonly ApiExtractor _apiExtractor;
+
+        public StatsClient()
         {
-            string fullUrl = WebRequestsHandler.GetFullUrl(publicationUrl).Result;
+            _webRequestsHandler = new WebRequestsHandler();
+            _apiExtractor = new ApiExtractor();
+        }
 
-            if (!(WebRequestsHandler.IsUrlValid(fullUrl).Result && (fullUrl.Contains("/video/") || fullUrl.Contains("/photo/"))))
-                throw new TikTokExplodeException("Invalid URL");
-
-            string apiResponse = new WebRequestsHandler().GetApiResponse(fullUrl).Result;
-
-            ApiExtractor apiExtractor = new ApiExtractor();
-            Stats stats = new Stats()
+        public async Task<Stats> GetAsync(string publicationUrl)
+        {
+            try
             {
-                CommentCount = apiExtractor.ExtractCommentCount(apiResponse),
-                DownloadingCount = apiExtractor.ExtractDownloadCount(apiResponse),
-                PlayCount = apiExtractor.ExtractPlayCount(apiResponse),
-                ShareCount = apiExtractor.ExtractShareCount(apiResponse)
-            };
+                string fullUrl = await _webRequestsHandler.GetFullUrl(publicationUrl);
 
-            return stats;
+                if (!(await _webRequestsHandler.IsUrlValid(fullUrl) && (fullUrl.Contains("/video/") || fullUrl.Contains("/photo/"))))
+                    throw new TikTokExplodeException("Invalid URL");
+
+                string apiResponse = await _webRequestsHandler.GetApiResponse(fullUrl);
+
+                return new Stats
+                {
+                    CommentCount = _apiExtractor.ExtractCommentCount(apiResponse),
+                    ShareCount = _apiExtractor.ExtractShareCount(apiResponse),
+                    DownloadingCount = _apiExtractor.ExtractDownloadCount(apiResponse),
+                    PlayCount = _apiExtractor.ExtractPlayCount(apiResponse)
+                };
+            }
+            catch (TikTokExplodeException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new TikTokExplodeException($"Error retrieving statistics: {ex.Message}");
+            }
         }
     }
 }

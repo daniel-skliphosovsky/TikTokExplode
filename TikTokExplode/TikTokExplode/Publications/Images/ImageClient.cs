@@ -4,35 +4,51 @@ using TikTokExplode.WebRequester;
 
 namespace TikTokExplode.Publications.Images
 {
-	public class ImageClient
-	{
-        public List<Image> GetAsync(string publicationUrl)
+    public class ImageClient
+    {
+        private readonly WebRequestsHandler _webRequestsHandler;
+        private readonly ApiExtractor _apiExtractor;
+
+        public ImageClient()
         {
-            string fullUrl = WebRequestsHandler.GetFullUrl(publicationUrl).Result;
+            _webRequestsHandler = new WebRequestsHandler();
+            _apiExtractor = new ApiExtractor();
+        }
 
-            if (!(WebRequestsHandler.IsUrlValid(fullUrl).Result && fullUrl.Contains("/photo/")))
-                throw new TikTokExplodeException("Invalid URL");
-
-            string apiResponse = new WebRequestsHandler().GetApiResponse(fullUrl).Result;
-
-            ApiExtractor apiExtractor = new ApiExtractor();
-
-            List<Image> images = new List<Image>();
-
-            for (int i = 0; i < apiExtractor.ExtractImagesCount(apiResponse); i++)
+        public async Task<List<Image>> GetAsync(string publicationUrl)
+        {
+            try
             {
-                Image image = new Image()
+                string fullUrl = await _webRequestsHandler.GetFullUrl(publicationUrl);
+
+                if (!(await _webRequestsHandler.IsUrlValid(fullUrl) && fullUrl.Contains("/photo/")))
+                    throw new TikTokExplodeException("Invalid URL");
+
+                string apiResponse = await _webRequestsHandler.GetApiResponse(fullUrl);
+                int imageCount = _apiExtractor.ExtractImagesCount(apiResponse);
+
+                List<Image> images = new List<Image>(imageCount);
+
+                for (int i = 0; i < imageCount; i++)
                 {
-                    Url = apiExtractor.ExtractImageUrl(apiResponse, i),
-                    Width = apiExtractor.ExtractImageWidth(apiResponse, i),
-                    Height = apiExtractor.ExtractImageHeight(apiResponse, i)
-                };
+                    images.Add(new Image
+                    {
+                        Url = _apiExtractor.ExtractImageUrl(apiResponse, i),
+                        Width = _apiExtractor.ExtractImageWidth(apiResponse, i),
+                        Height = _apiExtractor.ExtractImageHeight(apiResponse, i)
+                    });
+                }
 
-                images.Add(image);
-            }          
-
-            return images;
+                return images;
+            }
+            catch (TikTokExplodeException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new TikTokExplodeException($"Error retrieving images: {ex.Message}");
+            }
         }
     }
 }
-

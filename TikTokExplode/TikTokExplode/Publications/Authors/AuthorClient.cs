@@ -4,29 +4,45 @@ using TikTokExplode.WebRequester;
 
 namespace TikTokExplode.Publications.Authors
 {
-	public class AuthorClient
-	{
-        public Author GetAsync(string publicationUrl)
+    public class AuthorClient
+    {
+        private readonly WebRequestsHandler _webRequestsHandler;
+        private readonly ApiExtractor _apiExtractor;
+
+        public AuthorClient()
         {
-            string fullUrl = WebRequestsHandler.GetFullUrl(publicationUrl).Result;
+            _webRequestsHandler = new WebRequestsHandler();
+            _apiExtractor = new ApiExtractor();
+        }
 
-            if (!(WebRequestsHandler.IsUrlValid(fullUrl).Result && (fullUrl.Contains("/video/") || fullUrl.Contains("/photo/"))))
-                throw new TikTokExplodeException("Invalid URL");
-
-            string apiResponse = new WebRequestsHandler().GetApiResponse(fullUrl).Result;
-
-            ApiExtractor apiExtractor = new ApiExtractor();
-            Author author = new Author()
+        public async Task<Author> GetAsync(string publicationUrl)
+        {
+            try
             {
-                UserId = apiExtractor.ExtractAuthorUserId(apiResponse),
-                Nickname = apiExtractor.ExtractAuthorNickname(apiResponse),
-                IsVerified = apiExtractor.ExtractAuthorVerify(apiResponse),
-                ThumbAvatarUrl = apiExtractor.ExtractAuthorThumbAvatarUrl(apiResponse),
-                MediumAvatarUrl = apiExtractor.ExtractAuthorMediumAvatarUrl(apiResponse)
-            };
+                string fullUrl = await _webRequestsHandler.GetFullUrl(publicationUrl);
 
-            return author;
+                if (!(await _webRequestsHandler.IsUrlValid(fullUrl) && (fullUrl.Contains("/video/") || fullUrl.Contains("/photo/"))))
+                    throw new TikTokExplodeException("Invalid URL");
+
+                string apiResponse = await _webRequestsHandler.GetApiResponse(fullUrl);
+
+                return new Author
+                {
+                    UserId = _apiExtractor.ExtractAuthorUserId(apiResponse),
+                    Nickname = _apiExtractor.ExtractAuthorNickname(apiResponse),
+                    IsVerified = _apiExtractor.ExtractAuthorVerify(apiResponse),
+                    ThumbAvatarUrl = _apiExtractor.ExtractAuthorThumbAvatarUrl(apiResponse),
+                    MediumAvatarUrl = _apiExtractor.ExtractAuthorMediumAvatarUrl(apiResponse)
+                };
+            }
+            catch (TikTokExplodeException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new TikTokExplodeException($"Error retrieving author: {ex.Message}");
+            }
         }
     }
 }
-

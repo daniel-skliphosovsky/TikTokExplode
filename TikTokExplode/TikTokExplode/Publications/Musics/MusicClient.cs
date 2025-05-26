@@ -4,31 +4,47 @@ using TikTokExplode.WebRequester;
 
 namespace TikTokExplode.Publications.Musics
 {
-	public class MusicClient
-	{
-        public Music GetAsync(string publicationUrl)
+    public class MusicClient
+    {
+        private readonly WebRequestsHandler _webRequestsHandler;
+        private readonly ApiExtractor _apiExtractor;
+
+        public MusicClient()
         {
-            string fullUrl = WebRequestsHandler.GetFullUrl(publicationUrl).Result;
+            _webRequestsHandler = new WebRequestsHandler();
+            _apiExtractor = new ApiExtractor();
+        }
 
-            if (!(WebRequestsHandler.IsUrlValid(fullUrl).Result && (fullUrl.Contains("/video/") || fullUrl.Contains("/photo/"))))
-                throw new TikTokExplodeException("Invalid URL");
-
-            string apiResponse = new WebRequestsHandler().GetApiResponse(fullUrl).Result;
-
-            ApiExtractor apiExtractor = new ApiExtractor();
-            Music music = new Music()
+        public async Task<Music> GetAsync(string publicationUrl)
+        {
+            try
             {
-                Author = apiExtractor.ExtractMusicAuthor(apiResponse),
-                Title = apiExtractor.ExtractMusicTitle(apiResponse),
-                Id = apiExtractor.ExtractMusicId(apiResponse),
-                LargeCoverUrl = apiExtractor.ExtractMusicLargeCover(apiResponse),
-                MediumCoverUrl = apiExtractor.ExtractAuthorMediumAvatarUrl(apiResponse),
-                ThumbCoverUrl = apiExtractor.ExtractMusicThumbCover(apiResponse),
-                SoundUrl = apiExtractor.ExtractMusicSoundUrl(apiResponse)
-            };
+                string fullUrl = await _webRequestsHandler.GetFullUrl(publicationUrl);
 
-            return music;
+                if (!(await _webRequestsHandler.IsUrlValid(fullUrl) && fullUrl.Contains("/video/") || fullUrl.Contains("/photo/")))
+                    throw new TikTokExplodeException("Invalid URL");
+
+                string apiResponse = await _webRequestsHandler.GetApiResponse(fullUrl);
+
+                return new Music
+                {
+                    Id = _apiExtractor.ExtractMusicId(apiResponse),
+                    Title = _apiExtractor.ExtractMusicTitle(apiResponse),
+                    Author = _apiExtractor.ExtractMusicAuthor(apiResponse),
+                    SoundUrl = _apiExtractor.ExtractMusicSoundUrl(apiResponse),
+                    LargeCoverUrl = _apiExtractor.ExtractMusicLargeCover(apiResponse),
+                    MediumCoverUrl = _apiExtractor.ExtractMusicMediumCover(apiResponse),
+                    ThumbCoverUrl = _apiExtractor.ExtractMusicThumbCover(apiResponse)
+                };
+            }
+            catch (TikTokExplodeException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new TikTokExplodeException($"Error retrieving music: {ex.Message}");
+            }
         }
     }
 }
-

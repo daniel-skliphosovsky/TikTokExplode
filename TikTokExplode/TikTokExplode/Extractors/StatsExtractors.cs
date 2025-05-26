@@ -3,76 +3,39 @@ using TikTokExplode.Exceptions;
 
 namespace TikTokExplode.Extractors
 {
-	public partial class ApiExtractor
-	{
-        public ulong ExtractCommentCount(string apiResponse)
+    public partial class ApiExtractor
+    {
+        private static JsonElement GetStatisticsElement(string apiResponse)
         {
             try
             {
                 using JsonDocument doc = JsonDocument.Parse(apiResponse);
-                ulong count = doc.RootElement
-                                .GetProperty("aweme_list")[0]
-                                .GetProperty("statistics")
-                                .GetProperty("comment_count").GetUInt64();
-
-                return count;
+                return doc.RootElement
+                    .GetProperty("aweme_list")[0]
+                    .GetProperty("statistics");
             }
             catch (Exception ex)
             {
                 throw new TikTokExplodeException($"Error parsing JSON response: {ex.Message}");
             }
         }
-        public ulong ExtractDownloadCount(string apiResponse)
-        {
-            try
-            {
-                using JsonDocument doc = JsonDocument.Parse(apiResponse);
-                ulong count = doc.RootElement
-                                .GetProperty("aweme_list")[0]
-                                .GetProperty("statistics")
-                                .GetProperty("download_count").GetUInt64();
 
-                return count;
-            }
-            catch (Exception ex)
-            {
-                throw new TikTokExplodeException($"Error parsing JSON response: {ex.Message}");
-            }
-        }
-        public ulong ExtractPlayCount(string apiResponse)
+        private static ulong ExtractStatisticCount(string apiResponse, string propertyName)
         {
-            try
-            {
-                using JsonDocument doc = JsonDocument.Parse(apiResponse);
-                ulong count = doc.RootElement
-                                .GetProperty("aweme_list")[0]
-                                .GetProperty("statistics")
-                                .GetProperty("play_count").GetUInt64();
-
-                return count;
-            }
-            catch (Exception ex)
-            {
-                throw new TikTokExplodeException($"Error parsing JSON response: {ex.Message}");
-            }
+            JsonElement statistics = GetStatisticsElement(apiResponse);
+            return statistics.GetProperty(propertyName).GetUInt64();
         }
-        public ulong ExtractShareCount(string apiResponse)
-        {
-            try
-            {
-                using JsonDocument doc = JsonDocument.Parse(apiResponse);
-                ulong count = doc.RootElement
-                                .GetProperty("aweme_list")[0]
-                                .GetProperty("statistics")
-                                .GetProperty("share_count").GetUInt64();
 
-                return count;
-            }
-            catch (Exception ex)
-            {
-                throw new TikTokExplodeException($"Error parsing JSON response: {ex.Message}");
-            }
-        }
+        public ulong ExtractCommentCount(string apiResponse) =>
+            ExtractStatisticCount(apiResponse, "comment_count");
+
+        public ulong ExtractDownloadCount(string apiResponse) =>
+            ExtractStatisticCount(apiResponse, "download_count");
+
+        public ulong ExtractPlayCount(string apiResponse) =>
+            ExtractStatisticCount(apiResponse, "play_count");
+
+        public ulong ExtractShareCount(string apiResponse) =>
+            ExtractStatisticCount(apiResponse, "share_count");
     }
 }
-

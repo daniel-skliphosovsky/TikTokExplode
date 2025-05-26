@@ -5,81 +5,54 @@ namespace TikTokExplode.Extractors
 {
     public partial class ApiExtractor
     {
-        public int ExtractImagesCount(string apiResponse)
+        private static JsonElement GetImagePostInfoElement(string apiResponse)
         {
             try
             {
                 using JsonDocument doc = JsonDocument.Parse(apiResponse);
-                int imagesCount = doc.RootElement
-                                .GetProperty("aweme_list")[0]
-                                .GetProperty("image_post_info")
-                                .GetProperty("images").GetArrayLength();
-
-                return imagesCount;
+                return doc.RootElement
+                    .GetProperty("aweme_list")[0]
+                    .GetProperty("image_post_info");
             }
             catch (Exception ex)
             {
                 throw new TikTokExplodeException($"Error parsing JSON response: {ex.Message}");
             }
+        }
+
+        private static JsonElement GetImageElement(string apiResponse, int imageIndex)
+        {
+            JsonElement imagePostInfo = GetImagePostInfoElement(apiResponse);
+            return imagePostInfo
+                .GetProperty("images")[imageIndex]
+                .GetProperty("display_image");
+        }
+
+        public int ExtractImagesCount(string apiResponse)
+        {
+            JsonElement imagePostInfo = GetImagePostInfoElement(apiResponse);
+            return imagePostInfo
+                .GetProperty("images")
+                .GetArrayLength();
         }
 
         public string ExtractImageUrl(string apiResponse, int imageIndex)
         {
-            try
-            {
-                using JsonDocument doc = JsonDocument.Parse(apiResponse);
-                string imageUrl = doc.RootElement
-                                .GetProperty("aweme_list")[0]
-                                .GetProperty("image_post_info")
-                                .GetProperty("images")[imageIndex]
-                                .GetProperty("display_image").
-                                GetProperty("url_list")[1].GetString();
-
-                return imageUrl;
-            }
-            catch (Exception ex)
-            {
-                throw new TikTokExplodeException($"Error parsing JSON response: {ex.Message}");
-            }
+            JsonElement displayImage = GetImageElement(apiResponse, imageIndex);
+            JsonElement urlList = displayImage.GetProperty("url_list");
+            return urlList[urlList.GetArrayLength() - 1].GetString();
         }
+
         public int ExtractImageWidth(string apiResponse, int imageIndex)
         {
-            try
-            {
-                using JsonDocument doc = JsonDocument.Parse(apiResponse);
-                int imageWidth = doc.RootElement
-                                .GetProperty("aweme_list")[0]
-                                .GetProperty("image_post_info")
-                                .GetProperty("images")[imageIndex]
-                                .GetProperty("display_image").
-                                GetProperty("width").GetInt32();
-
-                return imageWidth;
-            }
-            catch (Exception ex)
-            {
-                throw new TikTokExplodeException($"Error parsing JSON response: {ex.Message}");
-            }
+            JsonElement displayImage = GetImageElement(apiResponse, imageIndex);
+            return displayImage.GetProperty("width").GetInt32();
         }
+
         public int ExtractImageHeight(string apiResponse, int imageIndex)
         {
-            try
-            {
-                using JsonDocument doc = JsonDocument.Parse(apiResponse);
-                int imageHeight = doc.RootElement
-                                .GetProperty("aweme_list")[0]
-                                .GetProperty("image_post_info")
-                                .GetProperty("images")[imageIndex]
-                                .GetProperty("display_image").
-                                GetProperty("height").GetInt32();
-
-                return imageHeight;
-            }
-            catch (Exception ex)
-            {
-                throw new TikTokExplodeException($"Error parsing JSON response: {ex.Message}");
-            }
+            JsonElement displayImage = GetImageElement(apiResponse, imageIndex);
+            return displayImage.GetProperty("height").GetInt32();
         }
     }
 }
-

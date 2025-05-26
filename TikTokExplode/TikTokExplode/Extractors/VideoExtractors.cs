@@ -3,81 +3,56 @@ using TikTokExplode.Exceptions;
 
 namespace TikTokExplode.Extractors
 {
-	public partial class ApiExtractor
-	{
-        public string ExtractVideoUrl(string apiResponse)
+    public partial class ApiExtractor
+    {
+        private static JsonElement GetVideoElement(string apiResponse)
         {
             try
             {
                 using JsonDocument doc = JsonDocument.Parse(apiResponse);
-                string videoUrl = doc.RootElement
-                                .GetProperty("aweme_list")[0]
-                                .GetProperty("video")
-                                .GetProperty("play_addr")
-                                .GetProperty("url_list")[0].GetString();
-
-                return videoUrl?.Replace("\\u0026", "&");
+                return doc.RootElement
+                    .GetProperty("aweme_list")[0]
+                    .GetProperty("video");
             }
             catch (Exception ex)
             {
                 throw new TikTokExplodeException($"Error parsing JSON response: {ex.Message}");
             }
+        }
+
+        public string ExtractVideoUrl(string apiResponse)
+        {
+            JsonElement video = GetVideoElement(apiResponse);
+            string url = video
+                .GetProperty("play_addr")
+                .GetProperty("url_list")[0]
+                .GetString();
+
+            return url?.Replace("\\u0026", "&");
         }
 
         public int ExtractVideoWidth(string apiResponse)
         {
-            try
-            {
-                using JsonDocument doc = JsonDocument.Parse(apiResponse);
-                int videoWidth = doc.RootElement
-                                .GetProperty("aweme_list")[0]
-                                .GetProperty("video")
-                                .GetProperty("play_addr")
-                                .GetProperty("width").GetInt32();
-
-                return videoWidth;
-            }
-            catch (Exception ex)
-            {
-                throw new TikTokExplodeException($"Error parsing JSON response: {ex.Message}");
-            }
+            JsonElement video = GetVideoElement(apiResponse);
+            return video
+                .GetProperty("width")
+                .GetInt32();
         }
 
         public int ExtractVideoHeight(string apiResponse)
         {
-            try
-            {
-                using JsonDocument doc = JsonDocument.Parse(apiResponse);
-                int videoHeight = doc.RootElement
-                                .GetProperty("aweme_list")[0]
-                                .GetProperty("video")
-                                .GetProperty("height").GetInt32();
-
-                return videoHeight;
-            }
-            catch (Exception ex)
-            {
-                throw new TikTokExplodeException($"Error parsing JSON response: {ex.Message}");
-            }
+            JsonElement video = GetVideoElement(apiResponse);
+            return video
+                .GetProperty("height")
+                .GetInt32();
         }
 
         public ulong ExtractVideoDuration(string apiResponse)
         {
-            try
-            {
-                using JsonDocument doc = JsonDocument.Parse(apiResponse);
-                ulong videoDuration = doc.RootElement
-                                .GetProperty("aweme_list")[0]
-                                .GetProperty("video")
-                                .GetProperty("duration").GetUInt64();
-
-                return videoDuration;
-            }
-            catch (Exception ex)
-            {
-                throw new TikTokExplodeException($"Error parsing JSON response: {ex.Message}");
-            }
+            JsonElement video = GetVideoElement(apiResponse);
+            return video
+                .GetProperty("duration")
+                .GetUInt64();
         }
     }
 }
-
