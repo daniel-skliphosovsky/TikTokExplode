@@ -37,5 +37,14 @@ namespace TikTokExplode.Extractors
 
         public ulong ExtractShareCount(string apiResponse) =>
             ExtractStatisticCount(apiResponse, "share_count");
+
+        public ulong ExtractDiggCount(string apiResponse) =>
+            ExtractStatisticCount(apiResponse, "digg_count");
+
+        public ulong ExtractForwardCount(string apiResponse) =>
+            ExtractStatisticCount(apiResponse, "forward_count");
+
+        public ulong ExtractRepostCount(string apiResponse) =>
+            ExtractStatisticCount(apiResponse, "repost_count");
     }
 }

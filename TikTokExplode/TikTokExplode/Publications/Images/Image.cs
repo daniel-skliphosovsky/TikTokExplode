@@ -2,7 +2,9 @@
 {
 	public class Image
 	{
-		public string Url { get; set; }
+        public string AwemeId { get; set; }
+
+        public string Url { get; set; }
 
 		public int Width { get; set; }
 

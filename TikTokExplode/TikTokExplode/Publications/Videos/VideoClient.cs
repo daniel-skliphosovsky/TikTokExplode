@@ -29,6 +29,7 @@ namespace TikTokExplode.Publications.Videos
 
                 return new Video
                 {
+                    AwemeId = _apiExtractor.ExtractPublicationId(apiResponse),
                     Url = _apiExtractor.ExtractVideoUrl(apiResponse),
                     Width = _apiExtractor.ExtractVideoWidth(apiResponse),
                     Height = _apiExtractor.ExtractVideoHeight(apiResponse),

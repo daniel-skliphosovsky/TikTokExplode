@@ -32,7 +32,8 @@ namespace TikTokExplode.Publications.Authors
                     Nickname = _apiExtractor.ExtractAuthorNickname(apiResponse),
                     IsVerified = _apiExtractor.ExtractAuthorVerify(apiResponse),
                     ThumbAvatarUrl = _apiExtractor.ExtractAuthorThumbAvatarUrl(apiResponse),
-                    MediumAvatarUrl = _apiExtractor.ExtractAuthorMediumAvatarUrl(apiResponse)
+                    MediumAvatarUrl = _apiExtractor.ExtractAuthorMediumAvatarUrl(apiResponse),
+                    Region = _apiExtractor.ExtractAuthorRegion(apiResponse)
                 };
             }
             catch (TikTokExplodeException)

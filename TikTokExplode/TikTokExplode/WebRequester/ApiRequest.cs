@@ -23,7 +23,18 @@ namespace TikTokExplode.WebRequester
                 return content;
             else
                 throw new TikTokExplodeException($"API request return {(int)response.StatusCode} ({response.StatusCode})");
-        }            
+        }
+
+        public async Task<HttpResponseMessage> GetDownloadUrlResponse(string downloadUrl)
+        {
+            CreateRandomHttpHeaders();
+
+            HttpResponseMessage response = await _httpClient.GetAsync(downloadUrl);
+            if (response.IsSuccessStatusCode)
+                return response;
+            else
+                throw new TikTokExplodeException($"DownloadUrl request error: {(int)response.StatusCode} ({response.StatusCode})");
+        }
     }
 }
 

@@ -11,6 +11,8 @@
 		public string ThumbAvatarUrl { get; set; }
 
 		public string MediumAvatarUrl { get; set; }
+
+		public string Region { get; set; }
     }
 }
 

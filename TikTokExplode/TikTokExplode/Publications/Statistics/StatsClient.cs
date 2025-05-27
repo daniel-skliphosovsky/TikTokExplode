@@ -31,7 +31,10 @@ namespace TikTokExplode.Publications.Statistics
                     CommentCount = _apiExtractor.ExtractCommentCount(apiResponse),
                     ShareCount = _apiExtractor.ExtractShareCount(apiResponse),
                     DownloadingCount = _apiExtractor.ExtractDownloadCount(apiResponse),
-                    PlayCount = _apiExtractor.ExtractPlayCount(apiResponse)
+                    PlayCount = _apiExtractor.ExtractPlayCount(apiResponse),
+                    DiggCount = _apiExtractor.ExtractDiggCount(apiResponse),
+                    ForwardCount = _apiExtractor.ExtractForwardCount(apiResponse),
+                    RepostCount = _apiExtractor.ExtractRepostCount(apiResponse)
                 };
             }
             catch (TikTokExplodeException)

@@ -39,6 +39,13 @@ namespace TikTokExplode.Extractors
             return !string.IsNullOrEmpty(verify);
         }
 
+        public string ExtractAuthorRegion(string apiResponse)
+        {
+            JsonElement author = GetAuthorElement(apiResponse);
+            string region = author.GetProperty("region").GetString();
+            return region;
+        }
+
         private string ExtractAuthorAvatarUrl(string apiResponse, string avatarProperty)
         {
             JsonElement author = GetAuthorElement(apiResponse);

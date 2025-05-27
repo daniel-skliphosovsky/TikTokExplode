@@ -55,13 +55,7 @@ namespace TikTokExplode.Publications
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(publicationUrl))
-                    throw new TikTokExplodeException("Publication URL cannot be null or empty");
-
                 string fullUrl = await _webRequestsHandler.GetFullUrlAsync(publicationUrl);
-
-                if (fullUrl == null)
-                    throw new TikTokExplodeException("WebRequester returned null or empty url");
 
                 if (!await _webRequestsHandler.IsUrlValidAsync(fullUrl, PublicationType.NoMetter))
                     throw new TikTokExplodeException("Invalid URL");
