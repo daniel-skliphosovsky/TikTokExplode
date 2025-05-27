@@ -33,7 +33,7 @@ namespace TikTokExplode.Publications.Images
                 {
                     images.Add(new Image
                     {
-                        AwemeId = _apiExtractor.ExtractPublicationId(apiResponse),
+                        AwemeId = _apiExtractor.ExtractPublicationId(fullUrl),
                         Url = _apiExtractor.ExtractImageUrl(apiResponse, i),
                         Width = _apiExtractor.ExtractImageWidth(apiResponse, i),
                         Height = _apiExtractor.ExtractImageHeight(apiResponse, i)
