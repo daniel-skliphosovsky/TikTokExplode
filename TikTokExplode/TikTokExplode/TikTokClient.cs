@@ -30,7 +30,7 @@ namespace TikTokExplode
 
             try
             {
-                using FileStream destination = File.Create(filePath);
+                using FileStream destination = new FileStream(filePath, FileMode.Create, FileAccess.Write);
 
                 using HttpResponseMessage response = await _webRequestsHandler.GetDownloadUrlResponse(video.Url);
 
@@ -57,7 +57,8 @@ namespace TikTokExplode
 
             try
             {
-                using FileStream destination = File.Create(filePath);
+
+                using FileStream destination = new FileStream(filePath, FileMode.Create, FileAccess.Write);
 
                 using HttpResponseMessage response = await _webRequestsHandler.GetDownloadUrlResponse(image.Url);
 
