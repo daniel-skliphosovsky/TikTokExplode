@@ -4,7 +4,7 @@ using TikTokExplode.WebRequester;
 using TikTokExplode.Publications.Videos;
 using TikTokExplode.Publications.Images;
 using TikTokExplode.Publications.Authors;
-using TikTokExplode.Publications.Musics;
+using TikTokExplode.Publications.Soundtracks;
 using TikTokExplode.Publications.Statistics;
 
 namespace TikTokExplode.Publications
@@ -17,7 +17,7 @@ namespace TikTokExplode.Publications
 
         public ImageClient Images { get; }
 
-        public MusicClient Musics { get; }
+        public SoundtrackClient Soundtracks { get; }
 
         public StatsClient Statistics { get; }
 
@@ -30,7 +30,7 @@ namespace TikTokExplode.Publications
             Videos = new VideoClient();
             Authors = new AuthorClient();
             Images = new ImageClient();
-            Musics = new MusicClient();
+            Soundtracks = new SoundtrackClient();
             Statistics = new StatsClient();
 
             _webRequestsHandler = new WebRequestsHandler();

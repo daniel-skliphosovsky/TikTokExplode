@@ -6,7 +6,7 @@
 
 		public ulong DiggCount { get; set; }
 
-		public ulong DownloadingCount { get; set; }
+		public ulong DownloadCount { get; set; }
 
 		public ulong PlayCount { get; set; }
 

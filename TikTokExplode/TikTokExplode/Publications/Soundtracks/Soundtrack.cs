@@ -1,6 +1,6 @@
-﻿namespace TikTokExplode.Publications.Musics
+﻿namespace TikTokExplode.Publications.Soundtracks
 {
-	public class Music
+	public class Soundtrack
 	{
 		public ulong Id { get; set; }
 

@@ -2,14 +2,14 @@
 using TikTokExplode.Extractors;
 using TikTokExplode.WebRequester;
 
-namespace TikTokExplode.Publications.Musics
+namespace TikTokExplode.Publications.Soundtracks
 {
-    public class MusicClient
+    public class SoundtrackClient
     {
         private readonly WebRequestsHandler _webRequestsHandler;
         private readonly ApiExtractor _apiExtractor;
 
-        public MusicClient()
+        public SoundtrackClient()
         {
             _webRequestsHandler = new WebRequestsHandler();
             _apiExtractor = new ApiExtractor();
@@ -18,7 +18,7 @@ namespace TikTokExplode.Publications.Musics
         /// <summary>
         /// Gets Music object by publication link
         /// </summary>
-        public async Task<Music> GetAsync(string publicationUrl)
+        public async Task<Soundtrack> GetAsync(string publicationUrl)
         {
             try
             {
@@ -29,7 +29,7 @@ namespace TikTokExplode.Publications.Musics
 
                 string apiResponse = await _webRequestsHandler.GetApiResponseAsync(fullUrl);
 
-                return new Music
+                return new Soundtrack
                 {
                     Id = _apiExtractor.ExtractMusicId(apiResponse),
                     Title = _apiExtractor.ExtractMusicTitle(apiResponse),
