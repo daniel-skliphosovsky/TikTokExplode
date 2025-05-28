@@ -9,24 +9,31 @@ namespace TikTokExplode.WebRequester
         /// <summary>
         /// Gets API response
         /// </summary>
-        public async Task<string> GetApiResponseAsync(string fullUrl)
-		{
-            CreateRandomHttpHeaders();
+        public async Task<string> GetApiResponseAsync(string fullUrl, int maxRetries = 3)
+        {
+            int attempt = 0;
+            while (attempt < maxRetries)
+            {
+                attempt++;
 
-            ApiExtractor apiExtractor = new ApiExtractor();
+                CreateRandomHttpHeaders();
 
-            string awemeId = apiExtractor.ExtractPublicationId(fullUrl);
+                ApiExtractor apiExtractor = new ApiExtractor();
 
-            if (string.IsNullOrEmpty(awemeId))
-                throw new TikTokExplodeException("Failed to extract aweme ID");
+                string awemeId = apiExtractor.ExtractPublicationId(fullUrl);
 
-            HttpResponseMessage response =  await _httpClient.GetAsync(_apiUrl.Replace("{awemeId}", awemeId));
-            string content = await response.Content.ReadAsStringAsync();
+                if (string.IsNullOrEmpty(awemeId))
+                    throw new TikTokExplodeException("Failed to extract aweme ID");
 
-            if (response.IsSuccessStatusCode)
-                return content;
-            else
-                throw new TikTokExplodeException($"API request return {(int)response.StatusCode} ({response.StatusCode})");
+                HttpResponseMessage response = await _httpClient.GetAsync(_apiUrl.Replace("{awemeId}", awemeId));
+                string content = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                    return content;
+                else
+                    return await GetApiResponseAsync(fullUrl);
+            }
+            throw new TikTokExplodeException($"API request failed after {maxRetries} attempts");
         }
 
         /// <summary>
