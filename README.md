@@ -191,4 +191,21 @@ foreach (Image image in images)
   counter++;
 }
 ```
+### Working with TikTokExplode exceptions
+```csharp
+try
+{
+    //some code
+}
+catch(TikTokExplodeException)
+{
+    //triggered when an exception is thrown by TikTokExplode
+}
+catch(Exception)
+{
+    //other exceptions
+}
+
+```
+
 
