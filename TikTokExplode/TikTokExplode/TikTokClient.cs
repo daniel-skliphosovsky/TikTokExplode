@@ -50,20 +50,26 @@ namespace TikTokExplode
         /// <summary>
         /// Download publication image
         /// </summary>
-        public async Task DownloadImageAsync(Image image, string folderPath, string customFileName = null, IProgress<double>? progress = null)
+        public async Task DownloadImagesAsync(List<Image> images, string folderPath, string customFileName = null, IProgress<double>? progress = null)
         {
-            ValidateParameters(image, folderPath);
+            ValidateParameters(images, folderPath);
             EnsureDirectoryExists(folderPath);
+
+            if (!images.Any())
+                throw new TikTokExplodeException("Images downloading error! Empty images list!");
 
             try
             {
-                using HttpResponseMessage response = await _webRequestsHandler.GetDownloadUrlResponse(image.Url);
-
-                string fileName = Path.Combine(folderPath, $"{customFileName ?? image.AwemeId}.jpg");
-
-                using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+                for (int i = 0; i < images.Count(); i++)
                 {
-                    await response.Content.CopyToAsync(fs);
+                    using HttpResponseMessage response = await _webRequestsHandler.GetDownloadUrlResponse(images[i].Url);
+
+                    string fileName = Path.Combine(folderPath, $"{customFileName ?? images[i].AwemeId}_{i}.jpg");
+
+                    using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+                    {
+                        await response.Content.CopyToAsync(fs);
+                    }
                 }
             }
             catch (TikTokExplodeException)
@@ -72,7 +78,7 @@ namespace TikTokExplode
             }
             catch (Exception ex)
             {
-                throw new TikTokExplodeException("Video downloading error!" + ex);
+                throw new TikTokExplodeException("Images downloading error!" + ex);
             }
         }
 
