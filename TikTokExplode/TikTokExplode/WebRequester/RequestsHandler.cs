@@ -24,7 +24,9 @@
                 "Mozilla/5.0 (iPad; CPU OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1"
             };
 
+            
             string randomAgent = userAgents[new Random().Next(userAgents.Length)];
+            _httpClient.DefaultRequestHeaders.Clear();
             _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(randomAgent);
         }
     }
