@@ -27,7 +27,7 @@
    ```
 3. **Add namespace**
    ```csharp
-   using SoundCloudExplode;
+   using TikTokExplode;
    ```
 
 
