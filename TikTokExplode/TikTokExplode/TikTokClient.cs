@@ -36,7 +36,7 @@ namespace TikTokExplode
 
                 long totalLength = response.Content.Headers.ContentLength ?? 0;
 
-                Stream stream = await response.Content.ReadAsStreamAsync();
+                using Stream stream = await response.Content.ReadAsStreamAsync();
 
                 await stream.CopyToAsync(destination, totalLength, progress);
             }
@@ -64,7 +64,7 @@ namespace TikTokExplode
 
                 long totalLength = response.Content.Headers.ContentLength ?? 0;
 
-                Stream stream = await response.Content.ReadAsStreamAsync();
+                using Stream stream = await response.Content.ReadAsStreamAsync();
 
                 await stream.CopyToAsync(destination, totalLength, progress);
             }
