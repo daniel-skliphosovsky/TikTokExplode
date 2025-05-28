@@ -5,7 +5,11 @@ namespace TikTokExplode.WebRequester
 {
 	public partial class WebRequestsHandler
     {
-		public async Task<string> GetApiResponseAsync(string fullUrl)
+
+        /// <summary>
+        /// Gets API response
+        /// </summary>
+        public async Task<string> GetApiResponseAsync(string fullUrl)
 		{
             CreateRandomHttpHeaders();
 
@@ -25,6 +29,9 @@ namespace TikTokExplode.WebRequester
                 throw new TikTokExplodeException($"API request return {(int)response.StatusCode} ({response.StatusCode})");
         }
 
+        /// <summary>
+        /// Get Author object by publication link
+        /// </summary>
         public async Task<HttpResponseMessage> GetDownloadUrlResponse(string downloadUrl)
         {
             CreateRandomHttpHeaders();
