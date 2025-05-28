@@ -183,13 +183,9 @@ TikTokClient TikTok = new TikTokClient();
 
 List<Image> images = await TikTok.Publications.Images.GetAsync("https://publication_url");
 
-int counter = 0;
-foreach (Image image in images)
-{
-  await TikTok.DownloadImageAsync(image, "path", $"file_name_{counter}");
-  // file_name option is not required. If you not set it file will be named publication_id
-  counter++;
-}
+await TikTok.DownloadImagesAsync(images, "path", $"file_name");
+// file_name option is not required. If you not set it file will be named publication_id
+
 ```
 ### Working with TikTokExplode exceptions
 ```csharp
