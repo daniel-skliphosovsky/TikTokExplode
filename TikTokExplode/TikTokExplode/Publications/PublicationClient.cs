@@ -70,7 +70,7 @@ namespace TikTokExplode.Publications
                     Author = await new AuthorClient().GetAsync(publicationUrl),
                     Images = await GetPublicationType(publicationUrl) == PublicationType.Images ? await new ImageClient().GetAsync(publicationUrl) : null,
                     Video = await GetPublicationType(publicationUrl) == PublicationType.Video ? await new VideoClient().GetAsync(publicationUrl) : null,
-                    Music = await new MusicClient().GetAsync(publicationUrl),
+                    Soundtrack = await new SoundtrackClient().GetAsync(publicationUrl),
                     Statistics = await new StatsClient().GetAsync(publicationUrl),
                     Description = _apiExtractor.ExtractPublicationDescription(apiResponse),
                     IsAds = _apiExtractor.ExtractPublicationIsAdsStatus(apiResponse),
