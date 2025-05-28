@@ -13,8 +13,6 @@
     <None Remove="Publications\Images\" />
     <None Remove="WebRequester\" />
     <None Remove="Extractors\" />
-    <None Remove="Utils\" />
-    <None Remove="Utils\Extensions\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Publications\Statistics\" />
@@ -22,7 +20,5 @@
     <Folder Include="Publications\Images\" />
     <Folder Include="WebRequester\" />
     <Folder Include="Extractors\" />
-    <Folder Include="Utils\" />
-    <Folder Include="Utils\Extensions\" />
   </ItemGroup>
 </Project>

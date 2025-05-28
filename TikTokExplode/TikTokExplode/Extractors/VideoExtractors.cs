@@ -20,6 +20,9 @@ namespace TikTokExplode.Extractors
             }
         }
 
+        /// <summary>
+        /// Extracts Video Url from api response
+        /// </summary>
         public string ExtractVideoUrl(string apiResponse)
         {
             JsonElement video = GetVideoElement(apiResponse);
@@ -31,6 +34,9 @@ namespace TikTokExplode.Extractors
             return url?.Replace("\\u0026", "&");
         }
 
+        /// <summary>
+        /// Extracts Video Width from api response
+        /// </summary>
         public int ExtractVideoWidth(string apiResponse)
         {
             JsonElement video = GetVideoElement(apiResponse);
@@ -39,6 +45,9 @@ namespace TikTokExplode.Extractors
                 .GetInt32();
         }
 
+        /// <summary>
+        /// Extracts Video Height from api response
+        /// </summary>
         public int ExtractVideoHeight(string apiResponse)
         {
             JsonElement video = GetVideoElement(apiResponse);
@@ -47,6 +56,9 @@ namespace TikTokExplode.Extractors
                 .GetInt32();
         }
 
+        /// <summary>
+        /// Extracts Video Duration from api response
+        /// </summary>
         public ulong ExtractVideoDuration(string apiResponse)
         {
             JsonElement video = GetVideoElement(apiResponse);

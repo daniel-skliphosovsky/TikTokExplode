@@ -20,18 +20,27 @@ namespace TikTokExplode.Extractors
             }
         }
 
+        /// <summary>
+        /// Extracts Author UserId from api response
+        /// </summary>
         public string ExtractAuthorUserId(string apiResponse)
         {
             JsonElement author = GetAuthorElement(apiResponse);
             return author.GetProperty("uid").GetString();
         }
 
+        /// <summary>
+        /// Extracts Author Nickname from api response
+        /// </summary>
         public string ExtractAuthorNickname(string apiResponse)
         {
             JsonElement author = GetAuthorElement(apiResponse);
             return author.GetProperty("nickname").GetString();
         }
 
+        /// <summary>
+        /// Extracts Author Verify Status from api response
+        /// </summary>
         public bool ExtractAuthorVerify(string apiResponse)
         {
             JsonElement author = GetAuthorElement(apiResponse);
@@ -39,6 +48,10 @@ namespace TikTokExplode.Extractors
             return !string.IsNullOrEmpty(verify);
         }
 
+
+        /// <summary>
+        /// Extracts Author Region from api response
+        /// </summary>
         public string ExtractAuthorRegion(string apiResponse)
         {
             JsonElement author = GetAuthorElement(apiResponse);
@@ -53,9 +66,15 @@ namespace TikTokExplode.Extractors
             return urlList[urlList.GetArrayLength() - 1].GetString();
         }
 
+        /// <summary>
+        /// Extracts Author ThumbAvatarUrl from api response
+        /// </summary>
         public string ExtractAuthorThumbAvatarUrl(string apiResponse) =>
             ExtractAuthorAvatarUrl(apiResponse, "avatar_thumb");
 
+        /// <summary>
+        /// Extracts Author MediumAvatarUrl from api response
+        /// </summary>
         public string ExtractAuthorMediumAvatarUrl(string apiResponse) =>
             ExtractAuthorAvatarUrl(apiResponse, "avatar_medium");
     }

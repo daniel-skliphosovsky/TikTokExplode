@@ -15,6 +15,9 @@ namespace TikTokExplode.Publications.Statistics
             _apiExtractor = new ApiExtractor();
         }
 
+        /// <summary>
+        /// Gets Statistics object by publication link
+        /// </summary>
         public async Task<Stats> GetAsync(string publicationUrl)
         {
             try

@@ -15,6 +15,9 @@ namespace TikTokExplode.Publications.Authors
             _apiExtractor = new ApiExtractor();
         }
 
+        /// <summary>
+        /// Gets Author object by publication link
+        /// </summary>
         public async Task<Author> GetAsync(string publicationUrl)
         {
             try

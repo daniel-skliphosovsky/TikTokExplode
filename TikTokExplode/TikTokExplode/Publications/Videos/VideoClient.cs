@@ -16,6 +16,9 @@ namespace TikTokExplode.Publications.Videos
             _apiExtractor = new ApiExtractor();
         }
 
+        /// <summary>
+        /// Gets Video object by publication link
+        /// </summary>
         public async Task<Video> GetAsync(string publicationUrl)
         {
             try

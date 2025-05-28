@@ -51,6 +51,9 @@ namespace TikTokExplode.Publications
             return fullurl.Contains("/photo/") ? PublicationType.Images : fullurl.Contains("/video/") ? PublicationType.Video : PublicationType.Unknown;
         }
 
+        /// <summary>
+        /// Gets Publication object by publication link (include Author, Stats, Music, Images/Video)
+        /// </summary>
         public async Task<Publication> GetAsync(string publicationUrl)
         {
             try

@@ -7,6 +7,9 @@ namespace TikTokExplode.WebRequester
 {
 	public partial class WebRequestsHandler
 	{
+        /// <summary>
+        /// Gets full url of TikTok publication
+        /// </summary>
         public async Task<string> GetFullUrlAsync(string url)
         {
             try
@@ -29,6 +32,9 @@ namespace TikTokExplode.WebRequester
             }
         }
 
+        /// <summary>
+        /// Checks for url is correct 
+        /// </summary>
         public async Task<bool> IsUrlValidAsync(string fullUrl, PublicationClient.PublicationType publicationType)
         {
             if (Regex.IsMatch(fullUrl, @"https:\/\/www\.tiktok\.com\/.+"))

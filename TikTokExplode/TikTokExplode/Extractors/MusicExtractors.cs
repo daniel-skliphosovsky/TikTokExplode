@@ -20,18 +20,27 @@ namespace TikTokExplode.Extractors
             }
         }
 
+        /// <summary>
+        /// Extracts Music Id from api response
+        /// </summary>
         public ulong ExtractMusicId(string apiResponse)
         {
             JsonElement music = GetMusicElement(apiResponse);
             return music.GetProperty("id").GetUInt64();
         }
 
+        /// <summary>
+        /// Extracts Music Title from api response
+        /// </summary>
         public string ExtractMusicTitle(string apiResponse)
         {
             JsonElement music = GetMusicElement(apiResponse);
             return music.GetProperty("title").GetString();
         }
 
+        /// <summary>
+        /// Extracts Music Author from api response
+        /// </summary>
         public string ExtractMusicAuthor(string apiResponse)
         {
             JsonElement music = GetMusicElement(apiResponse);
@@ -45,15 +54,27 @@ namespace TikTokExplode.Extractors
             return urlList[urlList.GetArrayLength() - 1].GetString();
         }
 
+        /// <summary>
+        /// Extracts Music LargeCoverUrl from api response
+        /// </summary>
         public string ExtractMusicLargeCover(string apiResponse) =>
             ExtractCoverUrl(apiResponse, "cover_large");
 
+        /// <summary>
+        /// Extracts Music MediumCoverUrl from api response
+        /// </summary>
         public string ExtractMusicMediumCover(string apiResponse) =>
             ExtractCoverUrl(apiResponse, "cover_medium");
 
+        /// <summary>
+        /// Extracts Music ThumbCoverUrl from api response
+        /// </summary>
         public string ExtractMusicThumbCover(string apiResponse) =>
             ExtractCoverUrl(apiResponse, "cover_thumb");
 
+        /// <summary>
+        /// Extracts Music SoundUrl from api response
+        /// </summary>
         public string ExtractMusicSoundUrl(string apiResponse)
         {
             JsonElement music = GetMusicElement(apiResponse);

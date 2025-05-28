@@ -28,6 +28,9 @@ namespace TikTokExplode.Extractors
                 .GetProperty("display_image");
         }
 
+        /// <summary>
+        /// Extracts Images count from api response
+        /// </summary>
         public int ExtractImagesCount(string apiResponse)
         {
             JsonElement imagePostInfo = GetImagePostInfoElement(apiResponse);
@@ -36,6 +39,9 @@ namespace TikTokExplode.Extractors
                 .GetArrayLength();
         }
 
+        /// <summary>
+        /// Extracts Image Url from api response
+        /// </summary>
         public string ExtractImageUrl(string apiResponse, int imageIndex)
         {
             JsonElement displayImage = GetImageElement(apiResponse, imageIndex);
@@ -43,12 +49,18 @@ namespace TikTokExplode.Extractors
             return urlList[urlList.GetArrayLength() - 1].GetString();
         }
 
+        /// <summary>
+        /// Extracts Image Width from api response
+        /// </summary>
         public int ExtractImageWidth(string apiResponse, int imageIndex)
         {
             JsonElement displayImage = GetImageElement(apiResponse, imageIndex);
             return displayImage.GetProperty("width").GetInt32();
         }
 
+        /// <summary>
+        /// Extracts Image Height from api response
+        /// </summary>
         public int ExtractImageHeight(string apiResponse, int imageIndex)
         {
             JsonElement displayImage = GetImageElement(apiResponse, imageIndex);

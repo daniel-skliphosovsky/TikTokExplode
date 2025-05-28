@@ -15,6 +15,9 @@ namespace TikTokExplode.Publications.Images
             _apiExtractor = new ApiExtractor();
         }
 
+        /// <summary>
+        /// Gets Images list object by publication link
+        /// </summary>
         public async Task<List<Image>> GetAsync(string publicationUrl)
         {
             try

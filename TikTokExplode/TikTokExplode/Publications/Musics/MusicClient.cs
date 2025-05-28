@@ -15,6 +15,9 @@ namespace TikTokExplode.Publications.Musics
             _apiExtractor = new ApiExtractor();
         }
 
+        /// <summary>
+        /// Gets Music object by publication link
+        /// </summary>
         public async Task<Music> GetAsync(string publicationUrl)
         {
             try
