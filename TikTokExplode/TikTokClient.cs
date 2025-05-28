@@ -21,7 +21,7 @@ namespace TikTokExplode
         /// <summary>
         /// Download publication video
         /// </summary>
-        public async Task DownloadVideoAsync(Video video, string folderPath, string customFileName = null, IProgress<double>? progress = null)
+        public async Task DownloadVideoAsync(Video video, string folderPath, string customFileName = null)
         {
             ValidateParameters(video, folderPath);
             EnsureDirectoryExists(folderPath);
@@ -50,7 +50,7 @@ namespace TikTokExplode
         /// <summary>
         /// Download publication image
         /// </summary>
-        public async Task DownloadImagesAsync(List<Image> images, string folderPath, string customFileName = null, IProgress<double>? progress = null)
+        public async Task DownloadImagesAsync(List<Image> images, string folderPath, string customFileName = null)
         {
             ValidateParameters(images, folderPath);
             EnsureDirectoryExists(folderPath);
