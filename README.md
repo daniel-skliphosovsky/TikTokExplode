@@ -12,7 +12,7 @@
     </a>
 </p>
 
-## 🚀 Installation
+## Installation
 
 1. **Download DLL**  
    [📥 TikTokExplode.dll](https://github.com/daniel-skliphosovsky/TikTokExplode/releases/download/FirstStableVersion/TikTokExplode.dll)
@@ -31,7 +31,7 @@
    ```
 
 
-## 💻 Usage
+## Usage
 
 First, create an instance of TikTokClient:
 
