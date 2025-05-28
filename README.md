@@ -169,7 +169,6 @@ TikTokClient TikTok = new TikTokClient();
 Video video = await TikTok.Publications.Videos.GetAsync("https://publication_url");
 
 await TikTok.DownloadVideoAsync(video, "path", "file_name");
-
 // file_name option is not required. If you not set it file will be named publication_id
 ```
 
