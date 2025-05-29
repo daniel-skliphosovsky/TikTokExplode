@@ -188,6 +188,8 @@ await TikTok.DownloadImagesAsync(images, "path", $"file_name");
 ```
 ### Working with TikTokExplode exceptions
 ```csharp
+using TikTokExplode.Exceptions;
+
 try
 {
     //some code
