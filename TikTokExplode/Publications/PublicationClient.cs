@@ -80,7 +80,7 @@ namespace TikTokExplode.Publications
             {
                 throw;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not OperationCanceledException)
             {
                 throw new TikTokExplodeException($"Error retrieving publication: {ex.Message}");
             }

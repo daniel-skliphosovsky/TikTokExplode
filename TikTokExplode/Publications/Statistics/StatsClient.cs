@@ -44,7 +44,7 @@ namespace TikTokExplode.Publications.Statistics
             {
                 throw;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not OperationCanceledException)
             {
                 throw new TikTokExplodeException($"Error retrieving statistics: {ex.Message}");
             }

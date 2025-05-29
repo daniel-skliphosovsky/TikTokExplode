@@ -50,7 +50,7 @@ namespace TikTokExplode.Publications.Images
             {
                 throw;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not OperationCanceledException)
             {
                 throw new TikTokExplodeException($"Error retrieving images: {ex.Message}");
             }

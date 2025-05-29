@@ -43,7 +43,7 @@ namespace TikTokExplode.Publications.Authors
             {
                 throw;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not OperationCanceledException)
             {
                 throw new TikTokExplodeException($"Error retrieving author: {ex.Message}");
             }

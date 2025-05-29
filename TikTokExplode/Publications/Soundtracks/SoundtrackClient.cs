@@ -44,7 +44,7 @@ namespace TikTokExplode.Publications.Soundtracks
             {
                 throw;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not OperationCanceledException)
             {
                 throw new TikTokExplodeException($"Error retrieving music: {ex.Message}");
             }

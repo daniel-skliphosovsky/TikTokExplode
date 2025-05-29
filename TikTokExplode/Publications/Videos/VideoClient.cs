@@ -43,7 +43,7 @@ namespace TikTokExplode.Publications.Videos
             {
                 throw;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not OperationCanceledException)
             {
                 throw new TikTokExplodeException($"Error retrieving video: {ex.Message}");
             }
