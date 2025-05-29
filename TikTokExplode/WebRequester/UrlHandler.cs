@@ -26,9 +26,9 @@ namespace TikTokExplode.WebRequester
             {
                 throw;
             }
-            catch(Exception ex)
+            catch
             {
-                throw new TikTokExplodeException("GetFullPath() exception: " + ex);
+                return url;
             }
         }
 
