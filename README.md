@@ -202,7 +202,87 @@ catch(Exception)
 {
     //other exceptions
 }
+```
+
+### Downloading using Progress and CancellationToken
+```csharp
+
+// Example with Progress
+
+using TikTokExplode;
+using TikTokExplode.Publications.Videos;
+
+TikTokClient TikTok = new TikTokClient();
+
+Video video = await TikTok.Publications.Videos.GetAsync("https://publication_url");
+
+Progress<double> progress = new Progress<double>(procent =>
+{
+    //triggered when progress value changed
+});
+
+await TikTok.DownloadVideoAsync(video, "path", progress: progress);
 
 ```
+```csharp
+
+// Example with CancellationToken
+
+using TikTokExplode;
+using TikTokExplode.Publications.Videos;
+
+TikTokClient TikTok = new TikTokClient();
+
+Video video = await TikTok.Publications.Videos.GetAsync("https://publication_url");
+
+using CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+
+// for cancel downloading -> cancellationTokenSource.Cancel();
+
+try
+{
+    await TikTok.DownloadVideoAsync(video, "path", cancellationToken: cancellationTokenSource.Token);
+}
+catch(OperationCanceledException)
+{
+    //triggered when downloading has been canceled
+}
+```
+
+### Getting type of TikTokPublication by link
+```csharp
+using TikTokExplode;
+using TikTokExplode.Publications;
+using TikTokExplode.Publications.Videos;
+using TikTokExplode.Publications.Images;
+
+TikTokClient TikTok = new TikTokClient();
+
+string url = "https://publication_url";
+
+PublicationClient.PublicationType publicationType = await PublicationClient.GetPublicationType(url);
+
+switch (publicationType)
+{
+    case PublicationClient.PublicationType.Images:
+        //...
+        List<Image> images = await TikTok.Publications.Images.GetAsync(url);
+        //...
+        break;
+
+    case PublicationClient.PublicationType.Video:
+        //...
+        Video video = await TikTok.Publications.Videos.GetAsync(url);
+        //...
+        break;
+
+    case PublicationClient.PublicationType.Unknown:
+    default:
+        // Link is incorrect
+        break;
+}
+```
+
+
 
 
