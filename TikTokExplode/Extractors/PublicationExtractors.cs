@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.RegularExpressions;
 using TikTokExplode.Exceptions;
+using TikTokExplode.WebRequester;
 
 namespace TikTokExplode.Extractors
 {
@@ -11,7 +12,7 @@ namespace TikTokExplode.Extractors
         /// </summary>
         public string ExtractPublicationId(string url)
         {
-            var match = Regex.Match(url, @"https:\/\/www\.tiktok\.com\/@[^/]+\/(video|photo)\/(\d+)");
+            Match match = Regex.Match(url, @"https:\/\/www\.tiktok\.com\/@[^/]+\/(video|photo)\/(\d+)");
             return match.Success ? match.Groups[2].Value : null;
         }
 

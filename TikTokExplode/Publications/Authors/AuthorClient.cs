@@ -22,12 +22,10 @@ namespace TikTokExplode.Publications.Authors
         {
             try
             {
-                string fullUrl = await _webRequestsHandler.GetFullUrlAsync(publicationUrl);
-
-                if (!await _webRequestsHandler.IsUrlValidAsync(fullUrl, PublicationClient.PublicationType.NoMetter))
+                if (!await _webRequestsHandler.IsUrlValidAsync(publicationUrl, PublicationClient.PublicationType.NoMetter))
                     throw new TikTokExplodeException("Invalid URL");
 
-                string apiResponse = await _webRequestsHandler.GetApiResponseAsync(fullUrl, cancellationToken: cancellationToken);
+                string apiResponse = await _webRequestsHandler.GetApiResponseAsync(publicationUrl, cancellationToken: cancellationToken);
 
                 return new Author
                 {

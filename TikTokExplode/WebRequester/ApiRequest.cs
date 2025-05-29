@@ -9,8 +9,9 @@ namespace TikTokExplode.WebRequester
         /// <summary>
         /// Gets API response
         /// </summary>
-        public async Task<string> GetApiResponseAsync(string fullUrl, int maxRetries = 3, CancellationToken cancellationToken = default)
+        public async Task<string> GetApiResponseAsync(string url, int maxRetries = 3, CancellationToken cancellationToken = default)
         {
+            string fullUrl = await GetFullUrlAsync(url);
             int attempt = 0;
             while (attempt < maxRetries)
             {

@@ -23,16 +23,14 @@ namespace TikTokExplode.Publications.Videos
         {
             try
             {
-                string fullUrl = await _webRequestsHandler.GetFullUrlAsync(publicationUrl);
-
-                if (!await _webRequestsHandler.IsUrlValidAsync(fullUrl, PublicationClient.PublicationType.Video))
+                if (!await _webRequestsHandler.IsUrlValidAsync(publicationUrl, PublicationClient.PublicationType.Video))
                     throw new TikTokExplodeException("Invalid URL");
 
-                string apiResponse = await _webRequestsHandler.GetApiResponseAsync(fullUrl, cancellationToken: cancellationToken);
+                string apiResponse = await _webRequestsHandler.GetApiResponseAsync(publicationUrl, cancellationToken: cancellationToken);
 
                 return new Video
                 {
-                    AwemeId = _apiExtractor.ExtractPublicationId(fullUrl),
+                    AwemeId = _apiExtractor.ExtractPublicationId(await _webRequestsHandler.GetFullUrlAsync(publicationUrl)),
                     Url = _apiExtractor.ExtractVideoUrl(apiResponse),
                     Width = _apiExtractor.ExtractVideoWidth(apiResponse),
                     Height = _apiExtractor.ExtractVideoHeight(apiResponse),

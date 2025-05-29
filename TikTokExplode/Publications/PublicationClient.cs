@@ -45,8 +45,9 @@ namespace TikTokExplode.Publications
             Unknown
         }
 
-        public static async Task<PublicationType> GetPublicationType(string fullUrl)
+        public static async Task<PublicationType> GetPublicationType(string url)
         {
+            string fullUrl = await new WebRequestsHandler().GetFullUrlAsync(url);
             return fullUrl.Contains("/photo/") ? PublicationType.Images : fullUrl.Contains("/video/") ? PublicationType.Video : PublicationType.Unknown;
         }
 
@@ -57,12 +58,10 @@ namespace TikTokExplode.Publications
         {
             try
             {
-                string fullUrl = await _webRequestsHandler.GetFullUrlAsync(publicationUrl);
-
-                if (!await _webRequestsHandler.IsUrlValidAsync(fullUrl, PublicationType.NoMetter))
+                if (!await _webRequestsHandler.IsUrlValidAsync(publicationUrl, PublicationType.NoMetter))
                     throw new TikTokExplodeException("Invalid URL");
 
-                string apiResponse = await _webRequestsHandler.GetApiResponseAsync(fullUrl, cancellationToken: cancellationToken);
+                string apiResponse = await _webRequestsHandler.GetApiResponseAsync(publicationUrl, cancellationToken: cancellationToken);
 
                 return new Publication
                 {
@@ -73,7 +72,7 @@ namespace TikTokExplode.Publications
                     Statistics = await new StatsClient().GetAsync(publicationUrl, cancellationToken),
                     Description = _apiExtractor.ExtractPublicationDescription(apiResponse),
                     IsAds = _apiExtractor.ExtractPublicationIsAdsStatus(apiResponse),
-                    Id = _apiExtractor.ExtractPublicationId(fullUrl)
+                    Id = _apiExtractor.ExtractPublicationId(await _webRequestsHandler.GetFullUrlAsync(publicationUrl))
                 };
             }
             catch (TikTokExplodeException)
