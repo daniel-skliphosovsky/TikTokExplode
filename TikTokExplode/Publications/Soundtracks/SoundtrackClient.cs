@@ -18,7 +18,7 @@ namespace TikTokExplode.Publications.Soundtracks
         /// <summary>
         /// Gets Music object by publication link
         /// </summary>
-        public async Task<Soundtrack> GetAsync(string publicationUrl)
+        public async Task<Soundtrack> GetAsync(string publicationUrl, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -27,7 +27,7 @@ namespace TikTokExplode.Publications.Soundtracks
                 if (!await _webRequestsHandler.IsUrlValidAsync(fullUrl, PublicationClient.PublicationType.NoMetter))
                     throw new TikTokExplodeException("Invalid URL");
 
-                string apiResponse = await _webRequestsHandler.GetApiResponseAsync(fullUrl);
+                string apiResponse = await _webRequestsHandler.GetApiResponseAsync(fullUrl, cancellationToken: cancellationToken);
 
                 return new Soundtrack
                 {

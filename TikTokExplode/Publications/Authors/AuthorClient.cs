@@ -18,7 +18,7 @@ namespace TikTokExplode.Publications.Authors
         /// <summary>
         /// Gets Author object by publication link
         /// </summary>
-        public async Task<Author> GetAsync(string publicationUrl)
+        public async Task<Author> GetAsync(string publicationUrl, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -27,7 +27,7 @@ namespace TikTokExplode.Publications.Authors
                 if (!await _webRequestsHandler.IsUrlValidAsync(fullUrl, PublicationClient.PublicationType.NoMetter))
                     throw new TikTokExplodeException("Invalid URL");
 
-                string apiResponse = await _webRequestsHandler.GetApiResponseAsync(fullUrl);
+                string apiResponse = await _webRequestsHandler.GetApiResponseAsync(fullUrl, cancellationToken: cancellationToken);
 
                 return new Author
                 {

@@ -5,7 +5,7 @@ namespace TikTokExplode.Extractors
 {
     public partial class ApiExtractor
     {
-        private static JsonElement GetImagePostInfoElement(string apiResponse)
+        private static JsonElement GetImageElement(string apiResponse)
         {
             try
             {
@@ -22,7 +22,7 @@ namespace TikTokExplode.Extractors
 
         private static JsonElement GetImageElement(string apiResponse, int imageIndex)
         {
-            JsonElement imagePostInfo = GetImagePostInfoElement(apiResponse);
+            JsonElement imagePostInfo = GetImageElement(apiResponse);
             return imagePostInfo
                 .GetProperty("images")[imageIndex]
                 .GetProperty("display_image");
@@ -33,7 +33,7 @@ namespace TikTokExplode.Extractors
         /// </summary>
         public int ExtractImagesCount(string apiResponse)
         {
-            JsonElement imagePostInfo = GetImagePostInfoElement(apiResponse);
+            JsonElement imagePostInfo = GetImageElement(apiResponse);
             return imagePostInfo
                 .GetProperty("images")
                 .GetArrayLength();

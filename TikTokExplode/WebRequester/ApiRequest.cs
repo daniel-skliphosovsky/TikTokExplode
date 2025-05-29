@@ -9,7 +9,7 @@ namespace TikTokExplode.WebRequester
         /// <summary>
         /// Gets API response
         /// </summary>
-        public async Task<string> GetApiResponseAsync(string fullUrl, int maxRetries = 3)
+        public async Task<string> GetApiResponseAsync(string fullUrl, int maxRetries = 3, CancellationToken cancellationToken = default)
         {
             int attempt = 0;
             while (attempt < maxRetries)
@@ -25,7 +25,7 @@ namespace TikTokExplode.WebRequester
                 if (string.IsNullOrEmpty(awemeId))
                     throw new TikTokExplodeException("Failed to extract aweme ID");
 
-                HttpResponseMessage response = await _httpClient.GetAsync(_apiUrl.Replace("{awemeId}", awemeId));
+                HttpResponseMessage response = await _httpClient.GetAsync(_apiUrl.Replace("{awemeId}", awemeId), cancellationToken);
                 string content = await response.Content.ReadAsStringAsync();
 
                 if (response.IsSuccessStatusCode)
@@ -39,11 +39,11 @@ namespace TikTokExplode.WebRequester
         /// <summary>
         /// Get Author object by publication link
         /// </summary>
-        public async Task<HttpResponseMessage> GetDownloadUrlResponse(string downloadUrl)
+        public async Task<HttpResponseMessage> GetDownloadUrlResponse(string downloadUrl, CancellationToken cancellationToken = default)
         {
             CreateRandomHttpHeaders();
 
-            HttpResponseMessage response = await _httpClient.GetAsync(downloadUrl);
+            HttpResponseMessage response = await _httpClient.GetAsync(downloadUrl ,cancellationToken);
             if (response.IsSuccessStatusCode)
                 return response;
             else

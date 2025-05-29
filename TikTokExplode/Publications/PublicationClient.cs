@@ -45,16 +45,15 @@ namespace TikTokExplode.Publications
             Unknown
         }
 
-        public async Task<PublicationType> GetPublicationType(string url)
+        public static async Task<PublicationType> GetPublicationType(string fullUrl)
         {
-            string fullurl = await _webRequestsHandler.GetFullUrlAsync(url);
-            return fullurl.Contains("/photo/") ? PublicationType.Images : fullurl.Contains("/video/") ? PublicationType.Video : PublicationType.Unknown;
+            return fullUrl.Contains("/photo/") ? PublicationType.Images : fullUrl.Contains("/video/") ? PublicationType.Video : PublicationType.Unknown;
         }
 
         /// <summary>
         /// Gets Publication object by publication link (include Author, Stats, Music, Images/Video)
         /// </summary>
-        public async Task<Publication> GetAsync(string publicationUrl)
+        public async Task<Publication> GetAsync(string publicationUrl, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -63,15 +62,15 @@ namespace TikTokExplode.Publications
                 if (!await _webRequestsHandler.IsUrlValidAsync(fullUrl, PublicationType.NoMetter))
                     throw new TikTokExplodeException("Invalid URL");
 
-                string apiResponse = await _webRequestsHandler.GetApiResponseAsync(fullUrl);
+                string apiResponse = await _webRequestsHandler.GetApiResponseAsync(fullUrl, cancellationToken: cancellationToken);
 
                 return new Publication
                 {
-                    Author = await new AuthorClient().GetAsync(publicationUrl),
-                    Images = await GetPublicationType(publicationUrl) == PublicationType.Images ? await new ImageClient().GetAsync(publicationUrl) : null,
-                    Video = await GetPublicationType(publicationUrl) == PublicationType.Video ? await new VideoClient().GetAsync(publicationUrl) : null,
-                    Soundtrack = await new SoundtrackClient().GetAsync(publicationUrl),
-                    Statistics = await new StatsClient().GetAsync(publicationUrl),
+                    Author = await new AuthorClient().GetAsync(publicationUrl, cancellationToken),
+                    Images = await GetPublicationType(publicationUrl) == PublicationType.Images ? await new ImageClient().GetAsync(publicationUrl, cancellationToken) : null,
+                    Video = await GetPublicationType(publicationUrl) == PublicationType.Video ? await new VideoClient().GetAsync(publicationUrl, cancellationToken) : null,
+                    Soundtrack = await new SoundtrackClient().GetAsync(publicationUrl, cancellationToken),
+                    Statistics = await new StatsClient().GetAsync(publicationUrl, cancellationToken),
                     Description = _apiExtractor.ExtractPublicationDescription(apiResponse),
                     IsAds = _apiExtractor.ExtractPublicationIsAdsStatus(apiResponse),
                     Id = _apiExtractor.ExtractPublicationId(fullUrl)

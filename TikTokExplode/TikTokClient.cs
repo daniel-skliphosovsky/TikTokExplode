@@ -1,4 +1,5 @@
 ﻿using TikTokExplode.Exceptions;
+using TikTokExplode.Extensions;
 using TikTokExplode.Publications;
 using TikTokExplode.WebRequester;
 using TikTokExplode.Publications.Videos;
@@ -21,7 +22,11 @@ namespace TikTokExplode
         /// <summary>
         /// Download publication video
         /// </summary>
-        public async Task DownloadVideoAsync(Video video, string folderPath, string customFileName = null)
+        public async Task DownloadVideoAsync(Video video,
+                                             string folderPath,
+                                             string customFileName = null,
+                                             IProgress<double> progress = null,
+                                             CancellationToken cancellationToken = default)
         {
             ValidateParameters(video, folderPath);
             EnsureDirectoryExists(folderPath);
@@ -32,10 +37,17 @@ namespace TikTokExplode
 
                 string fileName = Path.Combine(folderPath, $"{customFileName ?? video.AwemeId}.mp4");
 
-                using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
-                {
-                    await response.Content.CopyToAsync(fs);
-                }
+                using FileStream destination = File.Create(fileName);
+
+                long totalLength = response.Content.Headers.ContentLength ?? 0;
+
+                Stream stream = await response.Content.ReadAsStreamAsync();
+
+                await stream.CopyToAsync(
+                    destination,
+                    totalLength,
+                    progress,
+                    cancellationToken: cancellationToken);
             }
             catch (TikTokExplodeException)
             {
@@ -48,9 +60,13 @@ namespace TikTokExplode
         }
 
         /// <summary>
-        /// Download publication image
+        /// Download publication images
         /// </summary>
-        public async Task DownloadImagesAsync(List<Image> images, string folderPath, string customFileName = null)
+        public async Task DownloadImagesAsync(List<Image> images,
+                                             string folderPath,
+                                             string customFileName = null,
+                                             IProgress<double> progress = null,
+                                             CancellationToken cancellationToken = default)
         {
             ValidateParameters(images, folderPath);
             EnsureDirectoryExists(folderPath);
@@ -66,10 +82,17 @@ namespace TikTokExplode
 
                     string fileName = Path.Combine(folderPath, $"{customFileName ?? images[i].AwemeId}_{i}.jpg");
 
-                    using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
-                    {
-                        await response.Content.CopyToAsync(fs);
-                    }
+                    using FileStream destination = File.Create(fileName);
+
+                    long totalLength = response.Content.Headers.ContentLength ?? 0;
+
+                    Stream stream = await response.Content.ReadAsStreamAsync();
+
+                    await stream.CopyToAsync(
+                        destination,
+                        totalLength,
+                        progress,
+                        cancellationToken: cancellationToken);
                 }
             }
             catch (TikTokExplodeException)

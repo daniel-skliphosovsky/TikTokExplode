@@ -1,4 +1,5 @@
-﻿using TikTokExplode.Exceptions;
+﻿using System.Threading;
+using TikTokExplode.Exceptions;
 using TikTokExplode.Extractors;
 using TikTokExplode.WebRequester;
 
@@ -18,7 +19,7 @@ namespace TikTokExplode.Publications.Images
         /// <summary>
         /// Gets Images list object by publication link
         /// </summary>
-        public async Task<List<Image>> GetAsync(string publicationUrl)
+        public async Task<List<Image>> GetAsync(string publicationUrl, CancellationToken cancellationToken = default)
         {
             try
             { 
@@ -27,7 +28,7 @@ namespace TikTokExplode.Publications.Images
                 if (!await _webRequestsHandler.IsUrlValidAsync(fullUrl, PublicationClient.PublicationType.Images))
                     throw new TikTokExplodeException("Invalid URL");
 
-                string apiResponse = await _webRequestsHandler.GetApiResponseAsync(fullUrl);
+                string apiResponse = await _webRequestsHandler.GetApiResponseAsync(fullUrl, cancellationToken: cancellationToken);
                 int imageCount = _apiExtractor.ExtractImagesCount(apiResponse);
 
                 List<Image> images = new List<Image>(imageCount);

@@ -28,7 +28,7 @@ namespace TikTokExplode.WebRequester
             }
             catch(Exception ex)
             {
-                throw new TikTokExplodeException("GetFulPath exception: " + ex);
+                throw new TikTokExplodeException("GetFullPath() exception: " + ex);
             }
         }
 
@@ -39,21 +39,19 @@ namespace TikTokExplode.WebRequester
         {
             if (Regex.IsMatch(fullUrl, @"https:\/\/www\.tiktok\.com\/.+"))
             {
-                PublicationClient publicationClient = new PublicationClient();
-
                 switch (publicationType)
                 {
                     case PublicationClient.PublicationType.Video:
-                        if (await publicationClient.GetPublicationType(fullUrl) == PublicationClient.PublicationType.Video)
+                        if (await PublicationClient.GetPublicationType(fullUrl) == PublicationClient.PublicationType.Video)
                             return true;
                         else return false;
                     case PublicationClient.PublicationType.Images:
-                        if (await publicationClient.GetPublicationType(fullUrl) == PublicationClient.PublicationType.Images)
+                        if (await PublicationClient.GetPublicationType(fullUrl) == PublicationClient.PublicationType.Images)
                             return true;
                         else return false;
                     case PublicationClient.PublicationType.NoMetter:
-                        if (await publicationClient.GetPublicationType(fullUrl) == PublicationClient.PublicationType.Images ||
-                            await publicationClient.GetPublicationType(fullUrl) == PublicationClient.PublicationType.Video)
+                        if (await PublicationClient.GetPublicationType(fullUrl) == PublicationClient.PublicationType.Images ||
+                            await PublicationClient.GetPublicationType(fullUrl) == PublicationClient.PublicationType.Video)
                             return true;
                         else return false;
                     default:
