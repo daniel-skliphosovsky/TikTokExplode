@@ -18,7 +18,7 @@
 ## Installation
 
 1. **Download DLL**  
-   [📥 TikTokExplode.dll](https://github.com/daniel-skliphosovsky/TikTokExplode/releases/download/v1.2.1/TikTokExplode.dll)
+   [📥 TikTokExplode.dll](https://github.com/daniel-skliphosovsky/TikTokExplode/releases/download/v1.3.0/TikTokExplode.dll)
 
 2. **Add to project**  
    ```bash
@@ -174,6 +174,22 @@ Video video = await TikTok.Publications.Videos.GetAsync("https://publication_url
 await TikTok.DownloadVideoAsync(video, "path", "file_name");
 // file_name option is not required. If you not set it file will be named publication_id
 ```
+
+### Downloading publication video
+
+```csharp
+using TikTokExplode;
+using TikTokExplode.Publications.Images;
+
+TikTokClient TikTok = new TikTokClient();
+
+List<Image> images = await TikTok.Publications.Images.GetAsync("https://publication_url");
+
+//As example: download third image in publication
+await TikTok.DownloadImageAsync(images.ElementAt(2), "path", "file_name");
+// file_name option is not required. If you not set it file will be named publication_id
+```
+
 
 ### Downloading publication images
 
