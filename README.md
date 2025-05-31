@@ -5,6 +5,9 @@
 <h3 align="center">
     🚀 Powerful .NET library for TikTok API interaction
 </h3>
+<h6 align="center">
+    Note: Due to TikTok API's rate limiting, download functions or object fetching operations may take up to 10 seconds to complete.
+</h6>
 
 <p align="center">
     <a href="https://github.com/daniel-skliphosovsky/TikTokExplode/releases">
