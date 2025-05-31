@@ -53,7 +53,11 @@ namespace TikTokExplode
             {
                 throw;
             }
-            catch (Exception ex) when (ex is not OperationCanceledException)
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception ex)
             {
                 throw new TikTokExplodeException("Video downloading error!" + ex);
             }
@@ -93,7 +97,11 @@ namespace TikTokExplode
             {
                 throw;
             }
-            catch (Exception ex) when (ex is not OperationCanceledException)
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception ex)
             {
                 throw new TikTokExplodeException("Image downloading error!" + ex);
             }
