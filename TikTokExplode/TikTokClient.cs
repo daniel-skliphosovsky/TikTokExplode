@@ -60,6 +60,46 @@ namespace TikTokExplode
         }
 
         /// <summary>
+        /// Download publication image
+        /// </summary>
+        public async Task DownloadImageAsync(Image image,
+                                             string folderPath,
+                                             string customFileName = null,
+                                             IProgress<double> progress = null,
+                                             CancellationToken cancellationToken = default)
+        {
+            ValidateParameters(image, folderPath);
+            EnsureDirectoryExists(folderPath);
+
+            try
+            {
+                using HttpResponseMessage response = await _webRequestsHandler.GetDownloadUrlResponse(image.Url);
+
+                string fileName = Path.Combine(folderPath, $"{customFileName ?? image.AwemeId}.mp4");
+
+                using FileStream destination = File.Create(fileName);
+
+                long totalLength = response.Content.Headers.ContentLength ?? 0;
+
+                Stream stream = await response.Content.ReadAsStreamAsync();
+
+                await stream.CopyToAsync(
+                    destination,
+                    totalLength,
+                    progress,
+                    cancellationToken: cancellationToken);
+            }
+            catch (TikTokExplodeException)
+            {
+                throw;
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                throw new TikTokExplodeException("Image downloading error!" + ex);
+            }
+        }
+
+        /// <summary>
         /// Download publication images
         /// </summary>
         public async Task DownloadImagesAsync(List<Image> images,
@@ -68,40 +108,14 @@ namespace TikTokExplode
                                              IProgress<double> progress = null,
                                              CancellationToken cancellationToken = default)
         {
-            ValidateParameters(images, folderPath);
-            EnsureDirectoryExists(folderPath);
 
             if (!images.Any())
                 throw new TikTokExplodeException("Images downloading error! Empty images list!");
 
-            try
+            
+            for (int i = 0; i < images.Count(); i++)
             {
-                for (int i = 0; i < images.Count(); i++)
-                {
-                    using HttpResponseMessage response = await _webRequestsHandler.GetDownloadUrlResponse(images[i].Url);
-
-                    string fileName = Path.Combine(folderPath, $"{customFileName ?? images[i].AwemeId}_{i}.jpg");
-
-                    using FileStream destination = File.Create(fileName);
-
-                    long totalLength = response.Content.Headers.ContentLength ?? 0;
-
-                    Stream stream = await response.Content.ReadAsStreamAsync();
-
-                    await stream.CopyToAsync(
-                        destination,
-                        totalLength,
-                        progress,
-                        cancellationToken: cancellationToken);
-                }
-            }
-            catch (TikTokExplodeException)
-            {
-                throw;
-            }
-            catch (Exception ex) when (ex is not OperationCanceledException)
-            {
-                throw new TikTokExplodeException("Images downloading error!" + ex);
+                await DownloadImageAsync(images[i], folderPath, customFileName, progress, cancellationToken);
             }
         }
 
