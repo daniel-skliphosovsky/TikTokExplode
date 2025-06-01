@@ -302,6 +302,8 @@ switch (publicationType)
 }
 ```
 
+# Possible problems
+If the post you linked to is private (or does not exist), the program will download another random video (This is due to TikTok API). So sometimes after downloading, you may find a completely different video/photo or get data from a completely different post.
 
 
 
