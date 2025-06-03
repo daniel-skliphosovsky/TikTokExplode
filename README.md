@@ -175,7 +175,7 @@ await TikTok.DownloadVideoAsync(video, "path", "file_name");
 // file_name option is not required. If you not set it file will be named publication_id
 ```
 
-### Downloading publication video
+### Downloading publication image
 
 ```csharp
 using TikTokExplode;
