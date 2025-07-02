@@ -7,7 +7,7 @@ namespace TikTokExplode.WebRequester
     {
 
         /// <summary>
-        /// Gets API response
+        /// Get API response
         /// </summary>
         public async Task<string> GetApiResponseAsync(string url, int maxRetries = 3, CancellationToken cancellationToken = default)
         {
@@ -38,7 +38,7 @@ namespace TikTokExplode.WebRequester
         }
 
         /// <summary>
-        /// Get Author object by publication link
+        /// Get download-link reponse
         /// </summary>
         public async Task<HttpResponseMessage> GetDownloadUrlResponse(string downloadUrl, CancellationToken cancellationToken = default)
         {
