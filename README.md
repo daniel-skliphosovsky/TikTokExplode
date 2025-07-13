@@ -3,7 +3,7 @@
 </h1>
 
 <h3 align="center">
-    🚀 Powerful .NET library for TikTok API interaction
+    .NET library for TikTok API interaction
 </h3>
 <h6 align="center">
     Note: Due to TikTok API's rate limiting, download functions or object fetching operations may take up to 10 seconds to complete.
@@ -17,8 +17,7 @@
 
 ## Installation
 
-1. **Download DLL**  
-   [📥 TikTokExplode.dll](https://github.com/daniel-skliphosovsky/TikTokExplode/releases/download/v1.3.1/TikTokExplode.dll)
+1. **Download DLL**  [TikTokExplode.dll](https://github.com/daniel-skliphosovsky/TikTokExplode/releases/download/v1.3.1/TikTokExplode.dll)
 
 2. **Add to project**  
    ```bash
