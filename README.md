@@ -58,15 +58,15 @@ TikTokClient TikTok = new TikTokClient();
 
 Publication publication = await TikTok.Publications.GetAsync("https://publication_url");
 
-Author publicationAuthor = publication.Author;
-Stats publicationStatistics = publication.Statistics;
+Author author = publication.Author;
+Stats statistics = publication.Statistics;
 Soundtrack soundtrack = publication.Soundtrack;
-Video publicationVideo = publication.Video;
-List<Image> publicationImages = publication.Images;
+Video video = publication.Video;
+List<Image> images = publication.Images;
 
-bool publicationIsAds = publication.IsAds;
-string publicationid = publication.Id;
-string publicationDescription = publication.Description;
+bool isAds = publication.IsAds;
+string id = publication.Id;
+string description = publication.Description;
 ```
 
 ### Obtaining components separately
