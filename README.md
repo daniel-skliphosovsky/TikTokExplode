@@ -234,7 +234,7 @@ TikTokClient TikTok = new TikTokClient();
 
 Video video = await TikTok.Publications.Videos.GetAsync("https://publication_url");
 
-Progress<double> progress = new Progress<double>(procent =>
+Progress<double> progress = new Progress<double>(percent =>
 {
     //triggered when progress value changed
 });
