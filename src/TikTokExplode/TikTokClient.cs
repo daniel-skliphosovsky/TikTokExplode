@@ -10,23 +10,19 @@ namespace TikTokExplode;
 /// Main facade for interacting with TikTok content.
 /// Provides unified access to publication metadata and media downloading.
 /// </summary>
-public sealed class TikTokClient : IDisposable
+public sealed class TikTokClient
 {
-    private readonly IServiceProvider _serviceProvider;
     private readonly IPublicationRepository _publicationRepository;
     private readonly IVideoRepository _videoRepository;
     private readonly IImageRepository _imageRepository;
     private readonly FileDownloadService _fileDownloadService;
-    private bool _disposed;
 
     public TikTokClient(
-        IServiceProvider serviceProvider,
         IPublicationRepository publicationRepository,
         IVideoRepository videoRepository,
         IImageRepository imageRepository,
         FileDownloadService fileDownloadService)
     {
-        _serviceProvider = serviceProvider;
         _publicationRepository = publicationRepository;
         _videoRepository = videoRepository;
         _imageRepository = imageRepository;
@@ -70,12 +66,12 @@ public sealed class TikTokClient : IDisposable
     /// </summary>
     /// <param name="videoUrl">Direct video download URL (from Video.PlayUrl).</param>
     /// <param name="destinationPath">Full file path where the video will be saved.</param>
-    /// <param name="progress">Progress reporter (0.0 to 1.0).</param>
+    /// <param name="progress">Progress reporter (bytes downloaded).</param>
     /// <param name="ct">Cancellation token.</param>
     public async Task DownloadVideoAsync(
         string videoUrl,
         string destinationPath,
-        IProgress<double>? progress = null,
+        IProgress<long>? progress = null,
         CancellationToken ct = default)
     {
         await _fileDownloadService.DownloadFileAsync(videoUrl, destinationPath, progress, ct);
@@ -84,10 +80,14 @@ public sealed class TikTokClient : IDisposable
     /// <summary>
     /// Downloads an image from a direct image URL to the specified path.
     /// </summary>
+    /// <param name="imageUrl">Direct image download URL.</param>
+    /// <param name="destinationPath">Full file path where the image will be saved.</param>
+    /// <param name="progress">Progress reporter (bytes downloaded).</param>
+    /// <param name="ct">Cancellation token.</param>
     public async Task DownloadImageAsync(
         string imageUrl,
         string destinationPath,
-        IProgress<double>? progress = null,
+        IProgress<long>? progress = null,
         CancellationToken ct = default)
     {
         await _fileDownloadService.DownloadFileAsync(imageUrl, destinationPath, progress, ct);
@@ -96,10 +96,14 @@ public sealed class TikTokClient : IDisposable
     /// <summary>
     /// Downloads multiple images from their URLs to the specified directory.
     /// </summary>
+    /// <param name="images">List of image metadata to download.</param>
+    /// <param name="destinationDirectory">Directory where images will be saved.</param>
+    /// <param name="progress">Progress reporter (bytes downloaded).</param>
+    /// <param name="ct">Cancellation token.</param>
     public async Task DownloadImagesAsync(
         IReadOnlyList<Image> images,
         string destinationDirectory,
-        IProgress<double>? progress = null,
+        IProgress<long>? progress = null,
         CancellationToken ct = default)
     {
         for (int i = 0; i < images.Count; i++)
@@ -115,7 +119,7 @@ public sealed class TikTokClient : IDisposable
             var filePath = Path.Combine(destinationDirectory, fileName);
 
             await DownloadImageAsync(image.ImageUrl, filePath,
-                new Progress<double>(p => progress?.Report((i + p) / images.Count)), ct);
+                new Progress<long>(p => progress?.Report(p)), ct);
         }
     }
 
@@ -125,12 +129,4 @@ public sealed class TikTokClient : IDisposable
             throw new ValidationException("Invalid TikTok URL. URL must be from tiktok.com or vm.tiktok.com.");
     }
 
-    public void Dispose()
-    {
-        if (!_disposed)
-        {
-            (_serviceProvider as IDisposable)?.Dispose();
-            _disposed = true;
-        }
-    }
 }

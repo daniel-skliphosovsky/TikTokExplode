@@ -11,6 +11,10 @@ public sealed class HeadersProvider
         _userAgents = userAgents;
     }
 
+    /// <summary>
+    /// Applies randomized user-agent and standard HTTP headers to the given request headers.
+    /// </summary>
+    /// <param name="headers">The request headers to apply values to.</param>
     public void ApplyHeaders(HttpRequestHeaders headers)
     {
         var rng = Random.Shared;

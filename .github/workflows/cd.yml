@@ -29,7 +29,7 @@ jobs:
         run: dotnet test TikTokExplode.sln --no-build --configuration Release --verbosity normal
 
       - name: Pack NuGet package
-        run: dotnet pack src/TikTokExplode/TikTokExplode.csproj --configuration Release --output ./artifacts /p:Version=${{ github.event.release.tag_name }}
+        run: dotnet pack src/TikTokExplode/TikTokExplode.csproj --no-build --no-restore --configuration Release --output ./artifacts /p:Version=${{ github.event.release.tag_name }}
 
       - name: Push to NuGet.org
         run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate

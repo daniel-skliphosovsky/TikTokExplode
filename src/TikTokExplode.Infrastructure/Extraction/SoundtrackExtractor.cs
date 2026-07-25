@@ -13,6 +13,10 @@ public sealed class SoundtrackExtractor : ISoundtrackExtractor
         {
             using var doc = JsonDocument.Parse(jsonResponse);
             var awemeList = doc.RootElement.GetProperty("aweme_list");
+
+            if (awemeList.GetArrayLength() == 0)
+                throw new ValidationException("No soundtrack data in response");
+
             var musicData = awemeList[0].GetProperty("music");
 
             var soundtrack = new Soundtrack

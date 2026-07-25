@@ -45,23 +45,34 @@ public sealed class PublicationRepository : IPublicationRepository
 
         // Follow redirects to get full URL
         var fullUrl = await _urlHandler.GetFullUrlAsync(url, ct);
-        
+
         // Get API response
         var jsonResponse = await _apiClient.GetApiResponseAsync(fullUrl, ct);
-        
-        // Extract all entities
+
+        // Determine publication type based on URL content before extraction
+        var type = fullUrl.Contains("/photo/") ? PublicationType.Images : PublicationType.Video;
+
+        // Extract common entities (always present)
         var author = _authorExtractor.ExtractAuthor(jsonResponse);
-        var video = _videoExtractor.ExtractVideo(jsonResponse);
-        var images = _imageExtractor.ExtractImages(jsonResponse);
         var soundtrack = _soundtrackExtractor.ExtractSoundtrack(jsonResponse);
         var stats = _statsExtractor.ExtractStats(jsonResponse);
-        
-        // Determine publication type based on URL content
-        var type = fullUrl.Contains("/photo/") ? PublicationType.Images : PublicationType.Video;
+
+        // Extract type-specific entities
+        Video? video = null;
+        IReadOnlyList<Image>? images = null;
+
+        if (type == PublicationType.Video)
+        {
+            video = _videoExtractor.ExtractVideo(jsonResponse);
+        }
+        else if (type == PublicationType.Images)
+        {
+            images = _imageExtractor.ExtractImages(jsonResponse);
+        }
 
         using var doc = System.Text.Json.JsonDocument.Parse(jsonResponse);
         var awemeList = doc.RootElement.GetProperty("aweme_list");
-        
+
         var publication = new Publication
         {
             Id = PublicationId.Parse(awemeList[0].GetProperty("aweme_id").GetString() ?? string.Empty),
@@ -69,8 +80,8 @@ public sealed class PublicationRepository : IPublicationRepository
             IsAds = awemeList[0].GetProperty("is_ads").GetBoolean(),
             Type = type,
             Author = author,
-            Video = type == PublicationType.Video ? video : null,
-            Images = type == PublicationType.Images ? images : null,
+            Video = video,
+            Images = images,
             Soundtrack = soundtrack,
             Stats = stats
         };

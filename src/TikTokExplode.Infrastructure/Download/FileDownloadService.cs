@@ -13,10 +13,17 @@ public sealed class FileDownloadService
         _apiClient = apiClient;
     }
 
+    /// <summary>
+    /// Downloads a file from the specified URL to the given destination path.
+    /// </summary>
+    /// <param name="url">Direct download URL.</param>
+    /// <param name="destinationPath">Full file path where the file will be saved.</param>
+    /// <param name="progress">Progress reporter (bytes downloaded).</param>
+    /// <param name="ct">Cancellation token.</param>
     public async Task DownloadFileAsync(
         string url,
         string destinationPath,
-        IProgress<double>? progress = null,
+        IProgress<long>? progress = null,
         CancellationToken ct = default)
     {
         try
@@ -27,7 +34,7 @@ public sealed class FileDownloadService
 
             using var stream = await _apiClient.GetStreamAsync(url, ct);
             using var fileStream = File.Create(destinationPath);
-            
+
             var pool = ArrayPool<byte>.Shared;
             var buffer = pool.Rent(81920); // 80 KB buffer
 
@@ -35,12 +42,12 @@ public sealed class FileDownloadService
             {
                 long totalRead = 0;
                 int bytesRead;
-                
+
                 while ((bytesRead = await stream.ReadAsync(buffer.AsMemory(0, buffer.Length), ct)) > 0)
                 {
                     await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead), ct);
                     totalRead += bytesRead;
-                    progress?.Report(1.0 * totalRead / (stream.Length > 0 ? stream.Length : totalRead));
+                    progress?.Report(totalRead);
                 }
             }
             finally

@@ -12,6 +12,10 @@ public sealed class StatsExtractor : IStatsExtractor
         {
             using var doc = JsonDocument.Parse(jsonResponse);
             var awemeList = doc.RootElement.GetProperty("aweme_list");
+
+            if (awemeList.GetArrayLength() == 0)
+                throw new ValidationException("No stats data in response");
+
             var statsData = awemeList[0].GetProperty("statistics");
 
             var stats = new Stats

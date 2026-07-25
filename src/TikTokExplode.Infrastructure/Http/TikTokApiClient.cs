@@ -27,6 +27,8 @@ public sealed class TikTokApiClient : ITikTokApiClient
         var client = _httpClientFactory.CreateClient("TikTokApi");
         client.Timeout = TimeSpan.FromSeconds(_options.TimeoutSeconds);
 
+        var lastException = default(Exception);
+
         for (int attempt = 0; attempt < _options.MaxRetries; attempt++)
         {
             try
@@ -35,27 +37,35 @@ public sealed class TikTokApiClient : ITikTokApiClient
                 _headersProvider.ApplyHeaders(request.Headers);
 
                 using var response = await client.SendAsync(request, ct);
-                
-                if (response.StatusCode == HttpStatusCode.Forbidden && attempt < _options.MaxRetries - 1)
+
+                if (response.StatusCode == HttpStatusCode.Forbidden)
                 {
-                    await Task.Delay(_options.RetryDelayMilliseconds * (attempt + 1), ct);
-                    continue;
+                    if (attempt < _options.MaxRetries - 1)
+                    {
+                        await Task.Delay(_options.RetryDelayMilliseconds * (attempt + 1), ct);
+                        continue;
+                    }
+                    throw new ApiException("Forbidden by TikTok API", 403, string.Empty);
                 }
 
                 response.EnsureSuccessStatusCode();
                 return await response.Content.ReadAsStringAsync(ct);
             }
-            catch (TaskCanceledException) when (!ct.IsCancellationRequested && attempt < _options.MaxRetries - 1)
+            catch (Exception ex) when (ex is TaskCanceledException or HttpRequestException)
             {
-                await Task.Delay(_options.RetryDelayMilliseconds * (attempt + 1), ct);
-            }
-            catch (HttpRequestException) when (attempt < _options.MaxRetries - 1)
-            {
-                await Task.Delay(_options.RetryDelayMilliseconds * (attempt + 1), ct);
+                lastException = ex;
+                if (attempt < _options.MaxRetries - 1)
+                {
+                    await Task.Delay(_options.RetryDelayMilliseconds * (attempt + 1), ct);
+                }
             }
         }
 
-        throw new ApiException("Failed to get API response after retries", 0, string.Empty);
+        throw new ApiException(
+            "Failed to get API response after retries",
+            0,
+            lastException?.Message ?? string.Empty,
+            lastException ?? new Exception("Unknown error"));
     }
 
     public async Task<Stream> GetStreamAsync(string url, CancellationToken ct = default)

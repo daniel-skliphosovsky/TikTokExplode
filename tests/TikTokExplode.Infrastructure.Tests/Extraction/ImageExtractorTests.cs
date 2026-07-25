@@ -1,3 +1,4 @@
+using TikTokExplode.Domain.Exceptions;
 using TikTokExplode.Infrastructure.Extraction;
 using FluentAssertions;
 
@@ -18,5 +19,19 @@ public class ImageExtractorTests
         images[0].ImageUrl.Should().Be("https://example.com/image1.jpg");
         images[0].Width.Should().Be(1080);
         images[0].Height.Should().Be(1920);
+    }
+
+    [Fact]
+    public void ExtractImages_EmptyJson_ThrowsValidationException()
+    {
+        var json = """{"aweme_list":[]}""";
+        Assert.Throws<ValidationException>(() => _sut.ExtractImages(json));
+    }
+
+    [Fact]
+    public void ExtractImages_InvalidJson_ThrowsApiException()
+    {
+        var json = "not valid json";
+        Assert.Throws<ApiException>(() => _sut.ExtractImages(json));
     }
 }

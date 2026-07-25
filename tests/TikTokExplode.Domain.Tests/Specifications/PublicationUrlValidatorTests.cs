@@ -11,7 +11,7 @@ public class PublicationUrlValidatorTests
     [InlineData("https://tiktok.com/@user/video/1234567890")]
     [InlineData("http://www.tiktok.com/@user/video/123")]
     [InlineData("https://www.tiktok.com/@user/photo/1234567890")]
-    public void IsValid_ValidTikTokUrls_ReturnsTrue(string url)
+    public void IsValid_ValidTikTokUrls_ReturnsTrue(string? url)
     {
         PublicationUrlValidator.IsValid(url).Should().BeTrue();
     }
@@ -24,7 +24,7 @@ public class PublicationUrlValidatorTests
     [InlineData(null)]
     [InlineData("not-a-url")]
     [InlineData("https://example.com")]
-    public void IsValid_InvalidUrls_ReturnsFalse(string url)
+    public void IsValid_InvalidUrls_ReturnsFalse(string? url)
     {
         PublicationUrlValidator.IsValid(url).Should().BeFalse();
     }

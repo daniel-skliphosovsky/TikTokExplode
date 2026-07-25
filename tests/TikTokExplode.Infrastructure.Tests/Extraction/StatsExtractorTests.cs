@@ -1,3 +1,4 @@
+using TikTokExplode.Domain.Exceptions;
 using TikTokExplode.Infrastructure.Extraction;
 using FluentAssertions;
 
@@ -21,5 +22,19 @@ public class StatsExtractorTests
         stats.ShareCount.Should().Be(200);
         stats.ForwardCount.Should().Be(10);
         stats.RepostCount.Should().Be(5);
+    }
+
+    [Fact]
+    public void ExtractStats_EmptyJson_ThrowsValidationException()
+    {
+        var json = """{"aweme_list":[]}""";
+        Assert.Throws<ValidationException>(() => _sut.ExtractStats(json));
+    }
+
+    [Fact]
+    public void ExtractStats_InvalidJson_ThrowsApiException()
+    {
+        var json = "not valid json";
+        Assert.Throws<ApiException>(() => _sut.ExtractStats(json));
     }
 }
