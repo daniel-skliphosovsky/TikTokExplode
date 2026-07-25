@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+          cache: true
+
+      - name: Restore dependencies
+        run: dotnet restore TikTokExplode.sln
+
+      - name: Build
+        run: dotnet build TikTokExplode.sln --no-restore --configuration Release
+
+      - name: Run tests
+        run: dotnet test TikTokExplode.sln --no-build --configuration Release --verbosity normal
+
+      - name: Pack NuGet package
+        run: dotnet pack src/TikTokExplode/TikTokExplode.csproj --no-build --configuration Release --output ./artifacts
+
+      - name: Upload NuGet artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-packages
+          path: artifacts/*.nupkg
+          retention-days: 15
