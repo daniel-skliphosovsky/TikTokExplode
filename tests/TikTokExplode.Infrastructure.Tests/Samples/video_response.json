@@ -1,0 +1,52 @@
+{
+  "aweme_list": [
+    {
+      "aweme_id": "1234567890",
+      "desc": "Test TikTok video",
+      "is_ads": false,
+      "author": {
+        "uid": "user123",
+        "nickname": "TestUser",
+        "is_star": true,
+        "avatar_thumb": { "url_list": ["https://example.com/thumb.jpg"] },
+        "avatar_medium": { "url_list": ["https://example.com/medium.jpg"] },
+        "region": "US"
+      },
+      "video": {
+        "play_addr": { "url_list": ["https://example.com/video.mp4"] },
+        "width": 1080,
+        "height": 1920,
+        "duration": 30
+      },
+      "image_post_info": {
+        "images": [
+          {
+            "display_image": {
+              "url_list": ["https://example.com/image1.jpg"],
+              "width": 1080,
+              "height": 1920
+            }
+          }
+        ]
+      },
+      "music": {
+        "id": "music123",
+        "title": "Test Song",
+        "author": "Test Artist",
+        "play_url": { "url_list": ["https://example.com/sound.mp3"] },
+        "cover_large": { "url_list": ["https://example.com/large.jpg"] },
+        "cover_medium": { "url_list": ["https://example.com/medium.jpg"] },
+        "cover_thumb": { "url_list": ["https://example.com/thumb.jpg"] }
+      },
+      "statistics": {
+        "comment_count": 100,
+        "digg_count": 500,
+        "download_count": 50,
+        "play_count": 10000,
+        "share_count": 200,
+        "forward_count": 10,
+        "repost_count": 5
+      }
+    }
+  ]
+}

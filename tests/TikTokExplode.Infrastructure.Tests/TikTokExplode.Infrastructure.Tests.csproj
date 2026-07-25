@@ -10,6 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="Samples/**/*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
     <PackageReference Include="FluentAssertions" Version="8.10.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.10" />

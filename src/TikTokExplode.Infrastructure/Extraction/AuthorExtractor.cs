@@ -13,6 +13,10 @@ public sealed class AuthorExtractor : IAuthorExtractor
         {
             using var doc = JsonDocument.Parse(jsonResponse);
             var awemeList = doc.RootElement.GetProperty("aweme_list");
+
+            if (awemeList.GetArrayLength() == 0)
+                throw new ValidationException("No author data in response");
+
             var authorData = awemeList[0].GetProperty("author");
 
             var author = new Author
