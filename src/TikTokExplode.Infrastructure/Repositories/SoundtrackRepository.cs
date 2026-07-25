@@ -9,23 +9,23 @@ namespace TikTokExplode.Infrastructure.Repositories;
 public sealed class SoundtrackRepository : ISoundtrackRepository
 {
     private readonly ITikTokApiClient _apiClient;
-    private readonly ISoundtrackExtractor _soundtrackExtractor;
     private readonly UrlHandler _urlHandler;
+    private readonly ISoundtrackExtractor _extractor;
 
-    public SoundtrackRepository(
-        ITikTokApiClient apiClient,
-        ISoundtrackExtractor soundtrackExtractor,
-        UrlHandler urlHandler)
+    public SoundtrackRepository(ITikTokApiClient apiClient, UrlHandler urlHandler, ISoundtrackExtractor extractor)
     {
         _apiClient = apiClient;
-        _soundtrackExtractor = soundtrackExtractor;
         _urlHandler = urlHandler;
+        _extractor = extractor;
     }
 
     public async Task<Soundtrack> GetByUrlAsync(string url, CancellationToken ct = default)
     {
         var fullUrl = await _urlHandler.GetFullUrlAsync(url, ct);
-        var jsonResponse = await _apiClient.GetApiResponseAsync(fullUrl, ct);
-        return _soundtrackExtractor.ExtractSoundtrack(jsonResponse);
+        var json = await _apiClient.GetApiResponseAsync(fullUrl, ct);
+        var aweme = ResponseParser.ParseFirstAweme(json);
+
+        return _extractor.ExtractSoundtrack(aweme.Music)
+            ?? throw new Domain.Exceptions.ValidationException("Failed to extract soundtrack data from response.");
     }
 }

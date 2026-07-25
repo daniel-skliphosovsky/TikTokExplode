@@ -1,40 +1,21 @@
-using System.Text.Json;
 using TikTokExplode.Domain.Entities;
-using TikTokExplode.Domain.Exceptions;
+using TikTokExplode.Infrastructure.DTOs;
 
 namespace TikTokExplode.Infrastructure.Extraction;
 
-public sealed class ImageExtractor : IImageExtractor
+public class ImageExtractor : IImageExtractor
 {
-    public IReadOnlyList<Image> ExtractImages(string jsonResponse)
+    public IReadOnlyList<Image> ExtractImages(ImagePostInfoDto? dto)
     {
-        try
+        if (dto?.Images is not { Count: > 0 } images)
+            return Array.Empty<Image>();
+
+        return images.Select(img => new Image
         {
-            using var doc = JsonDocument.Parse(jsonResponse);
-            var awemeList = doc.RootElement.GetProperty("aweme_list");
-            
-            if (awemeList.GetArrayLength() == 0)
-                throw new ValidationException("No image data in response");
-
-            var images = new List<Image>();
-            var imageData = awemeList[0].GetProperty("image_post_info");
-
-            foreach (var img in imageData.GetProperty("images").EnumerateArray())
-            {
-                images.Add(new Image
-                {
-                    AwemeId = awemeList[0].GetProperty("aweme_id").GetString() ?? string.Empty,
-                    ImageUrl = img.GetProperty("display_image").GetProperty("url_list")[0].GetString() ?? string.Empty,
-                    Width = img.GetProperty("display_image").GetProperty("width").GetInt32(),
-                    Height = img.GetProperty("display_image").GetProperty("height").GetInt32()
-                });
-            }
-
-            return images.AsReadOnly();
-        }
-        catch (JsonException ex)
-        {
-            throw new ApiException("Failed to parse image JSON", 0, jsonResponse, ex);
-        }
+            AwemeId = string.Empty,
+            ImageUrl = img.DisplayImage?.UrlList?.FirstOrDefault() ?? string.Empty,
+            Width = img.DisplayImage?.Width ?? 0,
+            Height = img.DisplayImage?.Height ?? 0
+        }).ToList().AsReadOnly();
     }
 }

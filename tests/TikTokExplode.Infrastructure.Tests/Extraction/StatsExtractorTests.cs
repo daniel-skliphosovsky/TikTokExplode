@@ -1,4 +1,6 @@
+using System.Text.Json;
 using TikTokExplode.Domain.Exceptions;
+using TikTokExplode.Infrastructure.DTOs;
 using TikTokExplode.Infrastructure.Extraction;
 using FluentAssertions;
 
@@ -9,10 +11,13 @@ public class StatsExtractorTests
     private readonly StatsExtractor _sut = new();
 
     [Fact]
-    public void ExtractStats_ValidJson_ReturnsStats()
+    public void ExtractStats_ValidDto_ReturnsStats()
     {
         var json = File.ReadAllText("Samples/video_response.json");
-        var stats = _sut.ExtractStats(json);
+        var response = JsonSerializer.Deserialize(json, TikTokApiJsonContext.Default.TikTokApiResponse);
+        var dto = response!.AwemeList![0].Statistics!;
+
+        var stats = _sut.ExtractStats(dto);
 
         stats.Should().NotBeNull();
         stats.CommentCount.Should().Be(100);
@@ -28,13 +33,13 @@ public class StatsExtractorTests
     public void ExtractStats_EmptyJson_ThrowsValidationException()
     {
         var json = """{"aweme_list":[]}""";
-        Assert.Throws<ValidationException>(() => _sut.ExtractStats(json));
+        Assert.Throws<ValidationException>(() => ResponseParser.ParseFirstAweme(json));
     }
 
     [Fact]
-    public void ExtractStats_InvalidJson_ThrowsApiException()
+    public void ExtractStats_InvalidJson_ThrowsJsonException()
     {
         var json = "not valid json";
-        Assert.Throws<ApiException>(() => _sut.ExtractStats(json));
+        Assert.Throws<JsonException>(() => ResponseParser.ParseFirstAweme(json));
     }
 }

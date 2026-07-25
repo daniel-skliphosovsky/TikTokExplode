@@ -9,23 +9,23 @@ namespace TikTokExplode.Infrastructure.Repositories;
 public sealed class VideoRepository : IVideoRepository
 {
     private readonly ITikTokApiClient _apiClient;
-    private readonly IVideoExtractor _videoExtractor;
     private readonly UrlHandler _urlHandler;
+    private readonly IVideoExtractor _extractor;
 
-    public VideoRepository(
-        ITikTokApiClient apiClient,
-        IVideoExtractor videoExtractor,
-        UrlHandler urlHandler)
+    public VideoRepository(ITikTokApiClient apiClient, UrlHandler urlHandler, IVideoExtractor extractor)
     {
         _apiClient = apiClient;
-        _videoExtractor = videoExtractor;
         _urlHandler = urlHandler;
+        _extractor = extractor;
     }
 
     public async Task<Video> GetByUrlAsync(string url, CancellationToken ct = default)
     {
         var fullUrl = await _urlHandler.GetFullUrlAsync(url, ct);
-        var jsonResponse = await _apiClient.GetApiResponseAsync(fullUrl, ct);
-        return _videoExtractor.ExtractVideo(jsonResponse);
+        var json = await _apiClient.GetApiResponseAsync(fullUrl, ct);
+        var aweme = ResponseParser.ParseFirstAweme(json);
+
+        return _extractor.ExtractVideo(aweme.Video, aweme.AwemeId)
+            ?? throw new Domain.Exceptions.ValidationException("Failed to extract video data from response.");
     }
 }

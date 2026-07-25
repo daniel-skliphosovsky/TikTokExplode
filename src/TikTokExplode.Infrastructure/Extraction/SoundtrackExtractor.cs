@@ -1,40 +1,25 @@
-using System.Text.Json;
 using TikTokExplode.Domain.Entities;
-using TikTokExplode.Domain.Exceptions;
 using TikTokExplode.Domain.ValueObjects;
+using TikTokExplode.Infrastructure.DTOs;
 
 namespace TikTokExplode.Infrastructure.Extraction;
 
-public sealed class SoundtrackExtractor : ISoundtrackExtractor
+public class SoundtrackExtractor : ISoundtrackExtractor
 {
-    public Soundtrack ExtractSoundtrack(string jsonResponse)
+    public Soundtrack? ExtractSoundtrack(MusicDto? dto)
     {
-        try
+        if (dto is null)
+            return null;
+
+        return new Soundtrack
         {
-            using var doc = JsonDocument.Parse(jsonResponse);
-            var awemeList = doc.RootElement.GetProperty("aweme_list");
-
-            if (awemeList.GetArrayLength() == 0)
-                throw new ValidationException("No soundtrack data in response");
-
-            var musicData = awemeList[0].GetProperty("music");
-
-            var soundtrack = new Soundtrack
-            {
-                Id = SoundtrackId.Parse(musicData.GetProperty("id").GetString() ?? string.Empty),
-                Title = musicData.GetProperty("title").GetString() ?? string.Empty,
-                AuthorName = musicData.GetProperty("author").GetString() ?? string.Empty,
-                SoundUrl = musicData.GetProperty("play_url").GetProperty("url_list")[0].GetString() ?? string.Empty,
-                LargeCoverUrl = musicData.GetProperty("cover_large").GetProperty("url_list")[0].GetString() ?? string.Empty,
-                MediumCoverUrl = musicData.GetProperty("cover_medium").GetProperty("url_list")[0].GetString() ?? string.Empty,
-                ThumbCoverUrl = musicData.GetProperty("cover_thumb").GetProperty("url_list")[0].GetString() ?? string.Empty
-            };
-
-            return soundtrack;
-        }
-        catch (JsonException ex)
-        {
-            throw new ApiException("Failed to parse soundtrack JSON", 0, jsonResponse, ex);
-        }
+            Id = new SoundtrackId(dto.Id),
+            Title = dto.Title,
+            AuthorName = dto.AuthorName,
+            SoundUrl = dto.PlayUrl?.UrlList?.FirstOrDefault() ?? string.Empty,
+            LargeCoverUrl = dto.CoverLarge?.UrlList?.FirstOrDefault() ?? string.Empty,
+            MediumCoverUrl = dto.CoverMedium?.UrlList?.FirstOrDefault() ?? string.Empty,
+            ThumbCoverUrl = dto.CoverThumb?.UrlList?.FirstOrDefault() ?? string.Empty
+        };
     }
 }

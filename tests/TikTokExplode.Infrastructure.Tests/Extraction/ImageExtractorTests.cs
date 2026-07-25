@@ -1,4 +1,6 @@
+using System.Text.Json;
 using TikTokExplode.Domain.Exceptions;
+using TikTokExplode.Infrastructure.DTOs;
 using TikTokExplode.Infrastructure.Extraction;
 using FluentAssertions;
 
@@ -9,10 +11,13 @@ public class ImageExtractorTests
     private readonly ImageExtractor _sut = new();
 
     [Fact]
-    public void ExtractImages_ValidJson_ReturnsImages()
+    public void ExtractImages_ValidDto_ReturnsImages()
     {
         var json = File.ReadAllText("Samples/video_response.json");
-        var images = _sut.ExtractImages(json);
+        var response = JsonSerializer.Deserialize(json, TikTokApiJsonContext.Default.TikTokApiResponse);
+        var dto = response!.AwemeList![0].ImagePostInfo;
+
+        var images = _sut.ExtractImages(dto);
 
         images.Should().NotBeNull();
         images.Should().HaveCount(1);
@@ -25,13 +30,22 @@ public class ImageExtractorTests
     public void ExtractImages_EmptyJson_ThrowsValidationException()
     {
         var json = """{"aweme_list":[]}""";
-        Assert.Throws<ValidationException>(() => _sut.ExtractImages(json));
+        Assert.Throws<ValidationException>(() => ResponseParser.ParseFirstAweme(json));
     }
 
     [Fact]
-    public void ExtractImages_InvalidJson_ThrowsApiException()
+    public void ExtractImages_InvalidJson_ThrowsJsonException()
     {
         var json = "not valid json";
-        Assert.Throws<ApiException>(() => _sut.ExtractImages(json));
+        Assert.Throws<JsonException>(() => ResponseParser.ParseFirstAweme(json));
+    }
+
+    [Fact]
+    public void ExtractImages_NullDto_ReturnsEmptyList()
+    {
+        var images = _sut.ExtractImages(null);
+
+        images.Should().NotBeNull();
+        images.Should().BeEmpty();
     }
 }
