@@ -66,7 +66,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IStatsRepository, StatsRepository>();
 
         // Facade
-        services.AddSingleton<TikTokClient>();
+        services.AddSingleton<ITikTokClient, TikTokClient>();
 
         return services;
     }

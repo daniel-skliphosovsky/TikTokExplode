@@ -10,7 +10,7 @@ namespace TikTokExplode;
 /// Main facade for interacting with TikTok content.
 /// Provides unified access to publication metadata and media downloading.
 /// </summary>
-public sealed class TikTokClient
+public sealed class TikTokClient : ITikTokClient
 {
     private readonly IPublicationRepository _publicationRepository;
     private readonly IVideoRepository _videoRepository;
