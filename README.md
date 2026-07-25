@@ -2,7 +2,6 @@
 <p align="center">.NET library for interacting with TikTok content. Extract metadata and download videos, images, and music from TikTok publications.</p>
 <p align="center">
   <a href="https://github.com/daniel-skliphosovsky/TikTokExplode/actions/workflows/ci.yml"><img src="https://github.com/daniel-skliphosovsky/TikTokExplode/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://www.nuget.org/packages/TikTokExplode"><img src="https://img.shields.io/nuget/v/TikTokExplode" alt="NuGet"></a>
   <a href="https://github.com/daniel-skliphosovsky/TikTokExplode/blob/main/LICENSE"><img src="https://img.shields.io/github/license/daniel-skliphosovsky/TikTokExplode" alt="MIT License"></a>
   <a href="https://github.com/daniel-skliphosovsky/TikTokExplode/releases"><img src="https://img.shields.io/github/v/release/daniel-skliphosovsky/TikTokExplode" alt="Release"></a>
 </p>
@@ -11,14 +10,14 @@
 
 ## Installation
 
-```bash
-dotnet add package TikTokExplode
-```
+Download the latest `TikTokExplode.dll` from the [Releases](https://github.com/daniel-skliphosovsky/TikTokExplode/releases) page.
 
-Or add manually to your .csproj:
+Add a reference to the DLL in your project:
 
 ```xml
-<PackageReference Include="TikTokExplode" Version="1.0.0" />
+<Reference Include="TikTokExplode">
+  <HintPath>path\to\TikTokExplode.dll</HintPath>
+</Reference>
 ```
 
 ## Dependency Injection
@@ -146,7 +145,7 @@ The library is organized into three layers:
 
 - **TikTokExplode.Domain** — entities, value objects, interfaces, exceptions. No external dependencies.
 - **TikTokExplode.Infrastructure** — HTTP client, JSON extractors, file downloader, repositories.
-- **TikTokExplode** (facade) — public API, DI registration, NuGet package.
+- **TikTokExplode** (facade) — public API, DI registration.
 
 ## Possible problems
 

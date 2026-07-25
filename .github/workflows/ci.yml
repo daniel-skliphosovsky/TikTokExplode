@@ -1,10 +1,12 @@
-name: CI
+name: CI - TikTokExplode
 
 on:
   push:
     branches: [main, develop]
   pull_request:
     branches: [main]
+  release:
+    types: [published]
 
 jobs:
   build-and-test:
@@ -25,17 +27,49 @@ jobs:
         run: dotnet restore TikTokExplode.sln
 
       - name: Build
-        run: dotnet build TikTokExplode.sln --no-restore --configuration Release
+        run: dotnet build TikTokExplode.sln --configuration Release
 
       - name: Run tests
-        run: dotnet test TikTokExplode.sln --no-build --configuration Release --verbosity normal
+        run: dotnet test TikTokExplode.sln --configuration Release --verbosity normal
 
-      - name: Pack NuGet package
-        run: dotnet pack src/TikTokExplode/TikTokExplode.csproj --no-build --configuration Release --output ./artifacts
+      - name: Pack artifacts
+        run: |
+          dotnet publish src/TikTokExplode/TikTokExplode.csproj --configuration Release --output ./publish/TikTokExplode
+          mkdir -p ./artifacts
+          cp ./publish/TikTokExplode/TikTokExplode.dll ./artifacts/
+          cp ./publish/TikTokExplode/TikTokExplode.xml ./artifacts/
 
-      - name: Upload NuGet artifacts
+      - name: Upload DLL artifact
         uses: actions/upload-artifact@v4
         with:
-          name: nuget-packages
-          path: artifacts/*.nupkg
+          name: TikTokExplode-DLL
+          path: artifacts/
           retention-days: 15
+
+  release-dll:
+    needs: build-and-test
+    if: github.event_name == 'release' && github.event.action == 'published'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Build Release DLL
+        run: |
+          dotnet publish src/TikTokExplode/TikTokExplode.csproj --configuration Release --output ./release-dll
+
+      - name: Upload DLL to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ./release-dll/TikTokExplode.dll
+            ./release-dll/TikTokExplode.xml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
