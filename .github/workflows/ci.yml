@@ -1,17 +1,15 @@
-name: CI - TikTokExplode
+name: CI
 
 on:
   push:
     branches: [main, develop]
+    tags: ['v*']
   pull_request:
     branches: [main]
-  release:
-    types: [published]
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    
     steps:
       - uses: actions/checkout@v4
         with:
@@ -20,57 +18,47 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
-          cache: true
-          cache-dependency-path: '**/packages.lock.json'
+          dotnet-version: '10.0.x'
 
-      - name: Restore dependencies
-        run: dotnet restore TikTokExplode.sln
+      - name: Restore
+        run: dotnet restore
 
       - name: Build
-        run: dotnet build TikTokExplode.sln --configuration Release
+        run: dotnet build --configuration Release --no-restore
 
-      - name: Run tests
-        run: dotnet test TikTokExplode.sln --configuration Release --verbosity normal
+      - name: Test
+        run: dotnet test --configuration Release --no-build
 
-      - name: Pack artifacts
-        run: |
-          dotnet publish src/TikTokExplode/TikTokExplode.csproj --configuration Release --output ./publish/TikTokExplode
-          mkdir -p ./artifacts
-          cp ./publish/TikTokExplode/TikTokExplode.dll ./artifacts/
-          cp ./publish/TikTokExplode/TikTokExplode.xml ./artifacts/
+      - name: Publish DLL
+        run: dotnet publish src/TikTokExplode/TikTokExplode.csproj --configuration Release --output artifacts
 
-      - name: Upload DLL artifact
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: TikTokExplode-DLL
+          name: TikTokExplode
           path: artifacts/
           retention-days: 15
 
-  release-dll:
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
     needs: build-and-test
-    if: github.event_name == 'release' && github.event.action == 'published'
     runs-on: ubuntu-latest
-    
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: '10.0.x'
 
-      - name: Build Release DLL
-        run: |
-          dotnet publish src/TikTokExplode/TikTokExplode.csproj --configuration Release --output ./release-dll
+      - name: Build DLL
+        run: dotnet publish src/TikTokExplode/TikTokExplode.csproj --configuration Release --output release-artifacts
 
-      - name: Upload DLL to Release
+      - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          files: |
-            ./release-dll/TikTokExplode.dll
-            ./release-dll/TikTokExplode.xml
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          files: release-artifacts/*
+          generate_release_notes: true
+          fail_on_unmatched_files: false
