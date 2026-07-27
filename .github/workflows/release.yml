@@ -42,8 +42,6 @@ jobs:
         run: |
           gh release create "${{ github.ref_name }}" \
             publish/TikTokExplode.dll \
-            publish/TikTokExplode.xml \
-            publish/TikTokExplode.pdb \
             --generate-notes \
             --title "${{ github.ref_name }}" \
             --latest
