@@ -14,7 +14,7 @@ A .NET library for extracting metadata and downloading content from TikTok witho
 
 ## Requirements
 
-- .NET 10.0+
+- .NET 9.0+
 
 ## Installation
 
