@@ -1,0 +1,56 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+          cache: true
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test --configuration Release --no-build --verbosity normal
+
+      - name: Publish TikTokExplode.Domain
+        run: dotnet publish src/TikTokExplode.Domain/TikTokExplode.Domain.csproj --configuration Release --no-build --output publish/Domain
+
+      - name: Publish TikTokExplode.Infrastructure
+        run: dotnet publish src/TikTokExplode.Infrastructure/TikTokExplode.Infrastructure.csproj --configuration Release --no-build --output publish/Infrastructure
+
+      - name: Publish TikTokExplode
+        run: dotnet publish src/TikTokExplode/TikTokExplode.csproj --configuration Release --no-build --output publish/Facade
+
+      - name: Create Release
+        run: |
+          gh release create "${{ github.ref_name }}" \
+            publish/Domain/*.dll \
+            publish/Domain/*.xml \
+            publish/Domain/*.pdb \
+            publish/Infrastructure/*.dll \
+            publish/Infrastructure/*.xml \
+            publish/Infrastructure/*.pdb \
+            publish/Facade/*.dll \
+            publish/Facade/*.xml \
+            publish/Facade/*.pdb \
+            --generate-notes \
+            --title "${{ github.ref_name }}" \
+            --latest
+        env:
+          GH_TOKEN: ${{ github.token }}
