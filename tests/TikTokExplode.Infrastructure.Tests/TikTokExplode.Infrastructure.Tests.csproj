@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\TikTokExplode.Infrastructure\TikTokExplode.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\TikTokExplode.Domain\TikTokExplode.Domain.csproj" />
+    <ProjectReference Include="..\..\src\TikTokExplode\TikTokExplode.csproj" />
   </ItemGroup>
 
 </Project>

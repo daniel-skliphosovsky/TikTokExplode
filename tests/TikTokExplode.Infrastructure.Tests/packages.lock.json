@@ -2295,6 +2295,13 @@
         "resolved": "18.1.0",
         "contentHash": "5K+9KFg2TdTl7VXv88Qzi/0lqK6JFoNP3lRuImPYGRV7K/QYklDyTrj4+A+KAki1JsQi6qKY+hDyY7d6WRqjrw=="
       },
+      "tiktokexplode": {
+        "type": "Project",
+        "dependencies": {
+          "TikTokExplode.Domain": "[1.0.0, )",
+          "TikTokExplode.Infrastructure": "[1.0.0, )"
+        }
+      },
       "tiktokexplode.domain": {
         "type": "Project"
       },
