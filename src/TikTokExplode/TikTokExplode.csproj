@@ -8,4 +8,6 @@
     <ProjectReference Include="..\TikTokExplode.Infrastructure\TikTokExplode.Infrastructure.csproj" />
   </ItemGroup>
 
+  <Import Project="ilrepack.targets" Condition="Exists('ilrepack.targets')" />
+
 </Project>
