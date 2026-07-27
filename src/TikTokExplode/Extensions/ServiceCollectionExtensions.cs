@@ -48,7 +48,7 @@ public static class ServiceCollectionExtensions
         });
         services.AddSingleton<UrlHandler>();
         services.AddSingleton<ITikTokApiClient, TikTokApiClient>();
-        services.AddSingleton<FileDownloadService>();
+        services.AddSingleton<IFileDownloader, HttpFileDownloader>();
 
         // Extractors
         services.AddSingleton<IVideoExtractor, VideoExtractor>();

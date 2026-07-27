@@ -2,7 +2,7 @@ using TikTokExplode.Domain.Entities;
 using TikTokExplode.Domain.Exceptions;
 using TikTokExplode.Domain.Interfaces;
 using TikTokExplode.Domain.Specifications;
-using TikTokExplode.Infrastructure.Download;
+
 
 namespace TikTokExplode;
 
@@ -15,18 +15,18 @@ public sealed class TikTokClient : ITikTokClient
     private readonly IPublicationRepository _publicationRepository;
     private readonly IVideoRepository _videoRepository;
     private readonly IImageRepository _imageRepository;
-    private readonly FileDownloadService _fileDownloadService;
+    private readonly IFileDownloader _fileDownloader;
 
     public TikTokClient(
         IPublicationRepository publicationRepository,
         IVideoRepository videoRepository,
         IImageRepository imageRepository,
-        FileDownloadService fileDownloadService)
+        IFileDownloader fileDownloader)
     {
         _publicationRepository = publicationRepository;
         _videoRepository = videoRepository;
         _imageRepository = imageRepository;
-        _fileDownloadService = fileDownloadService;
+        _fileDownloader = fileDownloader;
     }
 
     /// <summary>
@@ -74,7 +74,7 @@ public sealed class TikTokClient : ITikTokClient
         IProgress<long>? progress = null,
         CancellationToken ct = default)
     {
-        await _fileDownloadService.DownloadFileAsync(videoUrl, destinationPath, progress, ct);
+        await _fileDownloader.DownloadFileAsync(videoUrl, destinationPath, progress, ct);
     }
 
     /// <summary>
@@ -90,7 +90,7 @@ public sealed class TikTokClient : ITikTokClient
         IProgress<long>? progress = null,
         CancellationToken ct = default)
     {
-        await _fileDownloadService.DownloadFileAsync(imageUrl, destinationPath, progress, ct);
+        await _fileDownloader.DownloadFileAsync(imageUrl, destinationPath, progress, ct);
     }
 
     /// <summary>
