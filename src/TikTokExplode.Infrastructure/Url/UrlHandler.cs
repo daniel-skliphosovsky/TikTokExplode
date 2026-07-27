@@ -1,49 +1,40 @@
+using System.Net;
 using TikTokExplode.Domain.Exceptions;
+using TikTokExplode.Infrastructure.Http;
 
 namespace TikTokExplode.Infrastructure.Url;
 
 public sealed class UrlHandler
 {
+    private readonly ITikTokApiClient _apiClient;
     private readonly IHttpClientFactory _httpClientFactory;
 
-    public UrlHandler(IHttpClientFactory httpClientFactory)
+    public UrlHandler(ITikTokApiClient apiClient, IHttpClientFactory httpClientFactory)
     {
+        _apiClient = apiClient;
         _httpClientFactory = httpClientFactory;
     }
 
-    /// <summary>
-    /// Follows redirects to resolve a short TikTok URL to its full form.
-    /// </summary>
-    /// <param name="url">The TikTok URL to resolve.</param>
-    /// <param name="ct">Cancellation token.</param>
-    /// <returns>The resolved full URL.</returns>
-    /// <exception cref="ApiException">Thrown when URL resolution fails.</exception>
     public async Task<string> GetFullUrlAsync(string url, CancellationToken ct = default)
     {
         try
         {
             var client = _httpClientFactory.CreateClient("TikTokApi");
-            client.Timeout = TimeSpan.FromSeconds(10);
-
             using var request = new HttpRequestMessage(HttpMethod.Head, url);
-            using var response = await client.SendAsync(request, ct);
+            request.Headers.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
 
-            if (response.StatusCode == System.Net.HttpStatusCode.Found ||
-                response.StatusCode == System.Net.HttpStatusCode.Moved ||
-                response.StatusCode == System.Net.HttpStatusCode.MovedPermanently)
+            using var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, ct);
+
+            if (response.StatusCode == HttpStatusCode.Found ||
+                response.StatusCode == HttpStatusCode.MovedPermanently ||
+                response.StatusCode == HttpStatusCode.Redirect)
             {
                 var redirectUrl = response.Headers.Location?.ToString();
                 if (!string.IsNullOrEmpty(redirectUrl))
-                {
-                    if (redirectUrl.StartsWith("/"))
-                    {
-                        var baseUri = new Uri(url);
-                        redirectUrl = $"{baseUri.Scheme}://{baseUri.Host}{redirectUrl}";
-                    }
                     return redirectUrl;
-                }
             }
 
+            response.EnsureSuccessStatusCode();
             return url;
         }
         catch (Exception ex)

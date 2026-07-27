@@ -1,5 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Polly;
+using Polly.Extensions.Http;
 using TikTokExplode.Domain.Interfaces;
 using TikTokExplode.Domain.Specifications;
 using TikTokExplode.Infrastructure.Configuration;
@@ -11,48 +13,54 @@ using TikTokExplode.Infrastructure.Url;
 
 namespace TikTokExplode.Extensions;
 
-/// <summary>
-/// Extension methods for registering TikTokExplode services in DI container.
-/// </summary>
 public static class ServiceCollectionExtensions
 {
-    /// <summary>
-    /// Adds TikTokExplode services to the specified IServiceCollection.
-    /// </summary>
-    /// <param name="services">The IServiceCollection to add services to.</param>
-    /// <param name="configureOptions">Optional action to configure TikTokApiOptions.</param>
-    /// <returns>The IServiceCollection so that additional calls can be chained.</returns>
     public static IServiceCollection AddTikTokExplode(
         this IServiceCollection services,
         Action<TikTokApiOptions>? configureOptions = null)
     {
-        // Configure options
         if (configureOptions != null)
             services.Configure(configureOptions);
         else
             services.Configure<TikTokApiOptions>(_ => { });
 
-        // HTTP client
-        services.AddHttpClient("TikTokApi")
-            .ConfigureHttpClient((sp, client) =>
-            {
-                var options = sp.GetRequiredService<IOptions<TikTokApiOptions>>().Value;
-                client.Timeout = TimeSpan.FromSeconds(options.TimeoutSeconds);
-                client.DefaultRequestHeaders.Connection.ParseAdd("keep-alive");
-            });
+        // Polly retry policy
+        var retryPolicy = HttpPolicyExtensions
+            .HandleTransientHttpError()
+            .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+            .WaitAndRetryAsync(
+                retryCount: 3,
+                sleepDurationProvider: attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)),
+                onRetry: (outcome, timespan, retryCount, context) =>
+                {
+                    // Logging can be added here
+                });
 
-        // Domain services
-        services.AddSingleton<IPublicationUrlSpecification, PublicationUrlSpecification>();
+        // Timeout policy
+        var timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromSeconds(30));
+
+        // Typed HttpClient with Polly policies
+        services.AddHttpClient<ITikTokApiClient, TikTokApiClient>()
+            .AddHttpMessageHandler<HeadersHandler>()
+            .AddHttpMessageHandler<RateLimitHandler>()
+            .AddPolicyHandler(retryPolicy)
+            .AddPolicyHandler(timeoutPolicy);
+
+        // Named HttpClient for UrlHandler
+        services.AddHttpClient("TikTokApi")
+            .AddHttpMessageHandler<HeadersHandler>()
+            .AddPolicyHandler(retryPolicy);
+
+        // Handlers
+        services.AddTransient<HeadersHandler>();
+        services.AddTransient<RateLimitHandler>();
 
         // Infrastructure services
-        services.AddSingleton<HeadersProvider>(sp =>
-        {
-            var options = sp.GetRequiredService<IOptions<TikTokApiOptions>>().Value;
-            return new HeadersProvider(options.UserAgents);
-        });
         services.AddSingleton<UrlHandler>();
-        services.AddSingleton<ITikTokApiClient, TikTokApiClient>();
         services.AddSingleton<IFileDownloader, HttpFileDownloader>();
+
+        // Specifications
+        services.AddSingleton<IPublicationUrlSpecification, PublicationUrlSpecification>();
 
         // Extractors
         services.AddSingleton<IVideoExtractor, VideoExtractor>();

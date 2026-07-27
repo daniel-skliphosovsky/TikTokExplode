@@ -74,6 +74,16 @@
           "Microsoft.Extensions.Options": "10.0.0"
         }
       },
+      "Microsoft.Extensions.Http.Polly": {
+        "type": "Transitive",
+        "resolved": "9.0.0",
+        "contentHash": "c9cq28bSsycDoHzeIrNODdnZap/Un1B6A7M2QVRlPaIaWAtKcswkDDelhco9NwOdhhkFeVDqk5MrmAbYdfgBTw==",
+        "dependencies": {
+          "Microsoft.Extensions.Http": "9.0.0",
+          "Polly": "7.2.4",
+          "Polly.Extensions.Http": "3.0.0"
+        }
+      },
       "Microsoft.Extensions.Logging": {
         "type": "Transitive",
         "resolved": "10.0.0",
@@ -119,6 +129,27 @@
         "resolved": "10.0.0",
         "contentHash": "inRnbpCS0nwO/RuoZIAqxQUuyjaknOOnCEZB55KSMMjRhl0RQDttSmLSGsUJN3RQ3ocf5NDLFd2mOQViHqMK5w=="
       },
+      "Polly": {
+        "type": "Transitive",
+        "resolved": "8.4.0",
+        "contentHash": "z2EeUutuy49jBQyZ5s2FUuTCGx3GCzJ0cJ2HbjWwks94TsC6bKTtAHKBkMZOa/DyYRl5yIX7MshvMTWl1J6RNg==",
+        "dependencies": {
+          "Polly.Core": "8.4.0"
+        }
+      },
+      "Polly.Core": {
+        "type": "Transitive",
+        "resolved": "8.4.0",
+        "contentHash": "3AZxuP//pxOeBo9tQs7/tz4Z5TTbu4BYfjpaXZD0JYKJo98ngN9TMUz1nybh4k0ykWkMBpGZALV/AmVIE3ew7A=="
+      },
+      "Polly.Extensions.Http": {
+        "type": "Transitive",
+        "resolved": "3.0.0",
+        "contentHash": "drrG+hB3pYFY7w1c3BD+lSGYvH2oIclH8GRSehgfyP5kjnFnHKQuuBhuHLv+PWyFuaTDyk/vfRpnxOzd11+J8g==",
+        "dependencies": {
+          "Polly": "7.1.0"
+        }
+      },
       "System.Diagnostics.DiagnosticSource": {
         "type": "Transitive",
         "resolved": "10.0.0",
@@ -131,7 +162,10 @@
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.Http": "[10.0.0, )",
+          "Microsoft.Extensions.Http.Polly": "[9.0.0, )",
           "Microsoft.Extensions.Options": "[10.0.0, )",
+          "Polly": "[8.4.0, )",
+          "Polly.Extensions.Http": "[3.0.0, )",
           "TikTokExplode.Domain": "[1.0.0, )"
         }
       }
