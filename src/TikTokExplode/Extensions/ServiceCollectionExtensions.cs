@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using TikTokExplode.Domain.Interfaces;
+using TikTokExplode.Domain.Specifications;
 using TikTokExplode.Infrastructure.Configuration;
 using TikTokExplode.Infrastructure.Download;
 using TikTokExplode.Infrastructure.Extraction;
@@ -39,6 +40,9 @@ public static class ServiceCollectionExtensions
                 client.Timeout = TimeSpan.FromSeconds(options.TimeoutSeconds);
                 client.DefaultRequestHeaders.Connection.ParseAdd("keep-alive");
             });
+
+        // Domain services
+        services.AddSingleton<IPublicationUrlSpecification, PublicationUrlSpecification>();
 
         // Infrastructure services
         services.AddSingleton<HeadersProvider>(sp =>

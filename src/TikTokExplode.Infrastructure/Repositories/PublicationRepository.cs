@@ -18,6 +18,7 @@ public sealed class PublicationRepository : IPublicationRepository
     private readonly IImageExtractor _imageExtractor;
     private readonly ISoundtrackExtractor _soundtrackExtractor;
     private readonly IStatsExtractor _statsExtractor;
+    private readonly IPublicationUrlSpecification _urlSpecification;
 
     public PublicationRepository(
         ITikTokApiClient apiClient,
@@ -26,7 +27,8 @@ public sealed class PublicationRepository : IPublicationRepository
         IVideoExtractor videoExtractor,
         IImageExtractor imageExtractor,
         ISoundtrackExtractor soundtrackExtractor,
-        IStatsExtractor statsExtractor)
+        IStatsExtractor statsExtractor,
+        IPublicationUrlSpecification urlSpecification)
     {
         _apiClient = apiClient;
         _urlHandler = urlHandler;
@@ -35,12 +37,13 @@ public sealed class PublicationRepository : IPublicationRepository
         _imageExtractor = imageExtractor;
         _soundtrackExtractor = soundtrackExtractor;
         _statsExtractor = statsExtractor;
+        _urlSpecification = urlSpecification;
     }
 
     public async Task<Publication> GetByUrlAsync(string url, CancellationToken ct = default)
     {
-        if (!PublicationUrlValidator.IsValid(url))
-            throw new ValidationException("Invalid TikTok URL format.");
+        if (!_urlSpecification.IsSatisfiedBy(url))
+            throw new ValidationException(_urlSpecification.GetErrorMessage(url));
 
         var fullUrl = await _urlHandler.GetFullUrlAsync(url, ct);
         var json = await _apiClient.GetApiResponseAsync(fullUrl, ct);

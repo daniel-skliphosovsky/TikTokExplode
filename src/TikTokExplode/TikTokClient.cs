@@ -16,17 +16,20 @@ public sealed class TikTokClient : ITikTokClient
     private readonly IVideoRepository _videoRepository;
     private readonly IImageRepository _imageRepository;
     private readonly IFileDownloader _fileDownloader;
+    private readonly IPublicationUrlSpecification _urlSpecification;
 
     public TikTokClient(
         IPublicationRepository publicationRepository,
         IVideoRepository videoRepository,
         IImageRepository imageRepository,
-        IFileDownloader fileDownloader)
+        IFileDownloader fileDownloader,
+        IPublicationUrlSpecification urlSpecification)
     {
         _publicationRepository = publicationRepository;
         _videoRepository = videoRepository;
         _imageRepository = imageRepository;
         _fileDownloader = fileDownloader;
+        _urlSpecification = urlSpecification;
     }
 
     /// <summary>
@@ -123,10 +126,10 @@ public sealed class TikTokClient : ITikTokClient
         }
     }
 
-    private static void ValidateUrl(string url)
+    private void ValidateUrl(string url)
     {
-        if (!PublicationUrlValidator.IsValid(url))
-            throw new ValidationException("Invalid TikTok URL. URL must be from tiktok.com or vm.tiktok.com.");
+        if (!_urlSpecification.IsSatisfiedBy(url))
+            throw new ValidationException(_urlSpecification.GetErrorMessage(url));
     }
 
 }

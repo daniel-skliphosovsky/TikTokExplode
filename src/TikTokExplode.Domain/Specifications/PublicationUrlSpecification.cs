@@ -1,22 +1,24 @@
 using System.Text.RegularExpressions;
-using TikTokExplode.Domain.ValueObjects;
 
 namespace TikTokExplode.Domain.Specifications;
 
-public static partial class PublicationUrlValidator
+public sealed partial class PublicationUrlSpecification : IPublicationUrlSpecification
 {
     private static readonly Regex TikTokUrlRegex = GenerateTikTokUrlRegex();
 
     [GeneratedRegex(@"https?:\/\/(?:www\.)?(?:tiktok\.com|vm\.tiktok\.com)\/.+", RegexOptions.Compiled | RegexOptions.IgnoreCase)]
     private static partial Regex GenerateTikTokUrlRegex();
 
-    /// <summary>
-    /// Validates whether a given URL is a valid TikTok URL.
-    /// </summary>
-    /// <param name="url">The URL to validate.</param>
-    /// <returns><c>true</c> if the URL is a valid TikTok URL; otherwise <c>false</c>.</returns>
-    public static bool IsValid(string? url)
+    public bool IsSatisfiedBy(string? url)
     {
         return !string.IsNullOrWhiteSpace(url) && TikTokUrlRegex.IsMatch(url);
+    }
+
+    public string GetErrorMessage(string? url)
+    {
+        if (string.IsNullOrWhiteSpace(url))
+            return "URL cannot be null or empty.";
+
+        return "Invalid TikTok URL. URL must be from tiktok.com or vm.tiktok.com.";
     }
 }
