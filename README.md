@@ -2,6 +2,9 @@
 
 A .NET library for extracting metadata and downloading content from TikTok without official API.
 
+[![CI](https://github.com/daniel-skliphosovsky/TikTokExplode/actions/workflows/ci.yml/badge.svg)](https://github.com/daniel-skliphosovsky/TikTokExplode/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 ## Features
 
 - Extract full publication metadata (author, video/images, soundtrack, stats)
@@ -11,6 +14,7 @@ A .NET library for extracting metadata and downloading content from TikTok witho
 - Cancellation token support for all operations
 - Configurable HTTP client via dependency injection
 - Automatic handling of redirects and URL shorteners
+- Rate limiting and retry with exponential backoff
 
 ## Requirements
 
@@ -24,7 +28,7 @@ dotnet add package TikTokExplode
 ```
 
 **Direct DLL reference:**
-Download the latest `TikTokExplode.dll` from the [Releases](https://github.com/daniel-skliphosovsky/TikTokExplode/releases) page and add a reference:
+Download the latest release DLLs from the [Releases](https://github.com/daniel-skliphosovsky/TikTokExplode/releases) page and add a reference:
 
 ```xml
 <Reference Include="TikTokExplode">
@@ -32,63 +36,71 @@ Download the latest `TikTokExplode.dll` from the [Releases](https://github.com/d
 </Reference>
 ```
 
-## Quick Usage
+## Quick Start
 
 ```csharp
 using TikTokExplode;
 using TikTokExplode.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 
-var client = new ServiceCollection()
-    .AddTikTokExplode()
-    .BuildServiceProvider()
-    .GetRequiredService<ITikTokClient>();
+// Setup DI
+var services = new ServiceCollection();
+services.AddTikTokExplode();
+var provider = services.BuildServiceProvider();
 
-var publication = await client.GetPublicationAsync("https://vm.tiktok.com/XXXXXX");
-Console.WriteLine($"Author: {publication.Author.Nickname}");
-Console.WriteLine($"Description: {publication.Description}");
-Console.WriteLine($"Likes: {publication.Stats.DiggCount}");
+// Get client
+var client = provider.GetRequiredService<ITikTokClient>();
+
+// Get publication metadata
+var publication = await client.GetPublicationAsync("https://www.tiktok.com/@user/video/1234567890");
+
+// Download video
+await client.DownloadVideoAsync(publication, "video.mp4");
 ```
 
-## API Reference
+## Configuration
 
-### ITikTokClient
+### TikTokApiOptions
 
-| Method | Description |
-|--------|-------------|
-| `GetPublicationAsync(string url, CancellationToken ct)` | Gets full publication metadata (author, video/images, soundtrack, stats) |
-| `GetVideoAsync(string url, CancellationToken ct)` | Gets video metadata |
-| `GetImagesAsync(string url, CancellationToken ct)` | Gets image metadata |
-| `DownloadVideoAsync(string videoUrl, string destinationPath, IProgress<long>?, CancellationToken ct)` | Downloads a video from a direct URL to a file |
-| `DownloadImageAsync(string imageUrl, string destinationPath, IProgress<long>?, CancellationToken ct)` | Downloads a single image from a direct URL to a file |
-| `DownloadImagesAsync(IReadOnlyList<Image> images, string destinationDir, IProgress<long>?, CancellationToken ct)` | Downloads multiple images to a directory |
+| Property | Default | Description |
+|----------|---------|-------------|
+| `BaseUrl` | `https://www.tiktok.com` | Base URL for TikTok web |
+| `ApiUrl` | `https://api22-normal-c-alisg.tiktokv.com` | API endpoint |
+| `UserAgents` | 4 Chrome UAs | User agent rotation pool |
+| `TimeoutSeconds` | 30 | HTTP request timeout |
+| `RetryCount` | 3 | Polly retry count |
+| `RetryBaseDelayMs` | 1000 | Base delay for exponential backoff |
 
-### DI Registration
+### Advanced DI Registration
 
 ```csharp
 services.AddTikTokExplode(options =>
 {
     options.TimeoutSeconds = 60;
-    options.MaxRetries = 5;
+    options.RetryCount = 5;
+    options.RetryBaseDelayMs = 2000;
 });
 ```
 
-## Project Structure
+## Architecture
 
-- **TikTokExplode.Domain** -- entities, value objects, interfaces, exceptions. No external dependencies.
-- **TikTokExplode.Infrastructure** -- HTTP client, JSON extractors, file downloader, repositories.
-- **TikTokExplode** (facade) -- public API (`ITikTokClient`, `TikTokClient`), DI registration.
+```
+TikTokExplode.Domain          -> Entities, Interfaces, Specifications, Exceptions
+TikTokExplode.Infrastructure  -> HTTP (Polly, Typed Client), Extractors, Repositories, Download
+TikTokExplode                 -> Facade (ITikTokClient), DI Extensions
+```
 
-## Build
+## Building from Source
 
 ```bash
 git clone https://github.com/daniel-skliphosovsky/TikTokExplode.git
 cd TikTokExplode
 dotnet restore
-dotnet build
-dotnet test
+dotnet build -c Release
+dotnet test -c Release
+dotnet pack -c Release
 ```
 
 ## License
 
-This project is licensed under the MIT License.
+MIT
