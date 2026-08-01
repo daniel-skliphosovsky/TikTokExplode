@@ -32,19 +32,63 @@ internal sealed class TikTokApiClient
 
         string apiUrl = _options.ApiUrl.Replace("{awemeId}", awemeId);
 
-        using HttpResponseMessage response = await SendWithRetryAsync(apiUrl, ct).ConfigureAwait(false);
-        string content = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
-
-        if (!response.IsSuccessStatusCode)
+        foreach (string? host in GetHosts())
         {
-            string message = response.StatusCode == HttpStatusCode.TooManyRequests
-                ? "TikTok is rate limiting. Try again in a minute."
-                : $"TikTok API request failed with status code {(int)response.StatusCode} ({response.StatusCode}).";
+            string candidate = host is null
+                ? apiUrl
+                : RebuildForHost(apiUrl, host);
 
-            throw new ApiException(message, (int)response.StatusCode, content);
+            using HttpResponseMessage response = await SendWithRetryAsync(candidate, ct).ConfigureAwait(false);
+            string content = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                if (response.StatusCode == HttpStatusCode.TooManyRequests && host is not null)
+                    continue; // try the next mirror host
+
+                string message = response.StatusCode == HttpStatusCode.TooManyRequests
+                    ? "TikTok is rate limiting. Try again in a minute."
+                    : $"TikTok API request failed with status code {(int)response.StatusCode} ({response.StatusCode}).";
+
+                throw new ApiException(message, (int)response.StatusCode, content);
+            }
+
+            // A 200 with a non-JSON body is a captcha/HTML page from TikTok,
+            // not a real response; fall through to the next host.
+            if (LooksLikeJson(content))
+                return content;
         }
 
-        return content;
+        throw new ApiException("TikTok API request failed on all hosts.", 0, string.Empty);
+    }
+
+    /// <summary>
+    /// Hosts to try: the primary host from the configured url first, then the
+    /// configured mirror hosts (deduplicated).
+    /// </summary>
+    private IEnumerable<string?> GetHosts()
+    {
+        yield return null; // primary, uses ApiUrl as-is
+
+        foreach (string host in _options.MirrorHosts)
+            yield return host;
+    }
+
+    /// <summary>
+    /// Replaces the host of the primary api url with the given mirror host,
+    /// keeping the path and query (including the resolved aweme id) intact.
+    /// </summary>
+    private static string RebuildForHost(string apiUrl, string host)
+    {
+        var uri = new Uri(apiUrl);
+        var builder = new UriBuilder(uri) { Host = host };
+        return builder.Uri.AbsoluteUri;
+    }
+
+    private static bool LooksLikeJson(string content)
+    {
+        string trimmed = content.TrimStart();
+        return trimmed.StartsWith('{') || trimmed.StartsWith('[');
     }
 
     /// <summary>
