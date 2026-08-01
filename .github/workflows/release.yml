@@ -30,13 +30,13 @@ jobs:
           ls -la publish
 
       - name: Delete previous release/tag
-        run: gh release delete v1.4.3 --yes --cleanup-tag 2>/dev/null || true
+        run: gh release delete v1.4.4 --yes --cleanup-tag 2>/dev/null || true
         env:
           GH_TOKEN: ${{ github.token }}
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.4.3
+          tag_name: v1.4.4
           files: publish/TikTokExplode.dll
           generate_release_notes: true
