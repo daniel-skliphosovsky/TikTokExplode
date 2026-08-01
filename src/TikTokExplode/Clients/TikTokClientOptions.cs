@@ -19,8 +19,7 @@ public class TikTokClientOptions
     {
         "api22-normal-c-alisg.tiktokv.com",
         "api19-normal-c-alisg.tiktokv.com",
-        "api16-normal-c-alisg.tiktokv.com",
-        "api26-normal-c-alisg.tiktokv.com"
+        "api16-normal-c-alisg.tiktokv.com"
     };
 
     /// <summary>

@@ -32,34 +32,51 @@ internal sealed class TikTokApiClient
 
         string apiUrl = _options.ApiUrl.Replace("{awemeId}", awemeId);
 
+        bool networkError = false;
+
         foreach (string? host in GetHosts())
         {
             string candidate = host is null
                 ? apiUrl
                 : RebuildForHost(apiUrl, host);
 
-            using HttpResponseMessage response = await SendWithRetryAsync(candidate, ct).ConfigureAwait(false);
-            string content = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
-
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                if (response.StatusCode == HttpStatusCode.TooManyRequests)
-                    continue; // try the next host
+                using HttpResponseMessage response = await SendWithRetryAsync(candidate, ct).ConfigureAwait(false);
+                string content = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
 
-                string message = response.StatusCode == HttpStatusCode.TooManyRequests
-                    ? "TikTok is rate limiting. Try again in a minute."
-                    : $"TikTok API request failed with status code {(int)response.StatusCode} ({response.StatusCode}).";
+                if (!response.IsSuccessStatusCode)
+                {
+                    if (response.StatusCode == HttpStatusCode.TooManyRequests)
+                        continue; // try the next host
 
-                throw new ApiException(message, (int)response.StatusCode, content);
+                    string message = response.StatusCode == HttpStatusCode.TooManyRequests
+                        ? "TikTok is rate limiting. Try again in a minute."
+                        : $"TikTok API request failed with status code {(int)response.StatusCode} ({response.StatusCode}).";
+
+                    throw new ApiException(message, (int)response.StatusCode, content);
+                }
+
+                // A 200 with a non-JSON body is a captcha/HTML page from TikTok,
+                // not a real response; fall through to the next host.
+                if (LooksLikeJson(content))
+                    return content;
             }
-
-            // A 200 with a non-JSON body is a captcha/HTML page from TikTok,
-            // not a real response; fall through to the next host.
-            if (LooksLikeJson(content))
-                return content;
+            catch (HttpRequestException)
+            {
+                // Network-level failure on this host (DNS, connection refused,
+                // timeout) after the retry handler gave up; try the next mirror
+                // instead of failing the whole call.
+                networkError = true;
+            }
         }
 
-        throw new ApiException("TikTok API request failed on all hosts.", 0, string.Empty);
+        throw new ApiException(
+            networkError
+                ? "TikTok is unreachable. Check your internet connection or try again later."
+                : "TikTok API request failed on all hosts.",
+            0,
+            string.Empty);
     }
 
     /// <summary>
