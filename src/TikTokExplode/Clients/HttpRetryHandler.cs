@@ -45,6 +45,14 @@ internal sealed class HttpRetryHandler
                 await Task.Delay(GetRetryDelay(null, attempt), ct).ConfigureAwait(false);
                 continue;
             }
+            catch (TaskCanceledException) when (!ct.IsCancellationRequested)
+            {
+                if (attempt >= _maxRetries)
+                    throw;
+
+                await Task.Delay(GetRetryDelay(null, attempt), ct).ConfigureAwait(false);
+                continue;
+            }
 
             if (response.IsSuccessStatusCode || attempt >= _maxRetries || !IsRetryable(response))
                 return response;
@@ -57,6 +65,7 @@ internal sealed class HttpRetryHandler
     private static bool IsRetryable(HttpResponseMessage response)
     {
         return response.StatusCode is HttpStatusCode.RequestTimeout
+            or (HttpStatusCode)425 // Too Early
             or HttpStatusCode.TooManyRequests
             or >= HttpStatusCode.InternalServerError;
     }
