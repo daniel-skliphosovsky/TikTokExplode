@@ -11,7 +11,7 @@ internal static partial class UrlHelper
 {
     private static readonly HttpClient RedirectClient = CreateRedirectClient();
 
-    [GeneratedRegex(@"https?:\/\/(?:www\.)?(?:tiktok\.com|vm\.tiktok\.com)\/.+", RegexOptions.Compiled | RegexOptions.IgnoreCase)]
+    [GeneratedRegex(@"https?:\/\/(?:www\.)?(?:tiktok\.com|vm\.tiktok\.com|vt\.tiktok\.com)\/.+", RegexOptions.Compiled | RegexOptions.IgnoreCase)]
     private static partial Regex TikTokUrlRegex();
 
     [GeneratedRegex(@"https:\/\/www\.tiktok\.com\/@[^/]+\/(video|photo)\/(\d+)", RegexOptions.Compiled | RegexOptions.IgnoreCase)]
