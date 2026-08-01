@@ -41,5 +41,11 @@ public class TikTokClientOptions
     /// <summary>
     /// Base delay in milliseconds for the exponential backoff between retries.
     /// </summary>
-    public int RetryBaseDelayMs { get; set; } = 500;
+    public int RetryBaseDelayMs { get; set; } = 1000;
+
+    /// <summary>
+    /// Minimum interval in milliseconds between TikTok API calls.
+    /// Helps avoid triggering rate limiting on bursty callers.
+    /// </summary>
+    public int MinRequestIntervalMs { get; set; } = 1500;
 }
