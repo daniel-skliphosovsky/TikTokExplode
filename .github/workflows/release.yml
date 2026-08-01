@@ -18,6 +18,12 @@ jobs:
         with:
           dotnet-version: '9.0.x'
 
+      - name: Get version from csproj
+        id: version
+        run: |
+          VERSION=$(sed -n 's/.*<VersionPrefix>\([^<]*\)<\/VersionPrefix>.*/\1/p' src/TikTokExplode/TikTokExplode.csproj)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
       - name: Publish
         run: |
           dotnet publish src/TikTokExplode/TikTokExplode.csproj -c Release -o publish
@@ -30,13 +36,13 @@ jobs:
           ls -la publish
 
       - name: Delete previous release/tag
-        run: gh release delete v1.4.4 --yes --cleanup-tag 2>/dev/null || true
+        run: gh release delete v${{ steps.version.outputs.version }} --yes --cleanup-tag 2>/dev/null || true
         env:
           GH_TOKEN: ${{ github.token }}
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.4.4
+          tag_name: v${{ steps.version.outputs.version }}
           files: publish/TikTokExplode.dll
           generate_release_notes: true
