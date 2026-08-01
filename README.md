@@ -17,7 +17,7 @@
 
 ## Installation
 
-1. **Download DLL**  [TikTokExplode.dll](https://github.com/daniel-skliphosovsky/TikTokExplode/releases/download/v1.4.1/TikTokExplode.dll)
+1. **Download DLL**  [TikTokExplode.dll](https://github.com/daniel-skliphosovsky/TikTokExplode/releases/download/v1.4.2/TikTokExplode.dll)
 
 2. **Add to project**  
    ```bash
