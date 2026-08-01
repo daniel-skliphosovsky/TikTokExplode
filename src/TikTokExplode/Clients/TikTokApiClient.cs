@@ -43,8 +43,8 @@ internal sealed class TikTokApiClient
 
             if (!response.IsSuccessStatusCode)
             {
-                if (response.StatusCode == HttpStatusCode.TooManyRequests && host is not null)
-                    continue; // try the next mirror host
+                if (response.StatusCode == HttpStatusCode.TooManyRequests)
+                    continue; // try the next host
 
                 string message = response.StatusCode == HttpStatusCode.TooManyRequests
                     ? "TikTok is rate limiting. Try again in a minute."
@@ -70,8 +70,12 @@ internal sealed class TikTokApiClient
     {
         yield return null; // primary, uses ApiUrl as-is
 
+        string primaryHost = new Uri(_options.ApiUrl).Host;
         foreach (string host in _options.MirrorHosts)
-            yield return host;
+        {
+            if (!string.Equals(host, primaryHost, StringComparison.OrdinalIgnoreCase))
+                yield return host;
+        }
     }
 
     /// <summary>
@@ -87,8 +91,7 @@ internal sealed class TikTokApiClient
 
     private static bool LooksLikeJson(string content)
     {
-        string trimmed = content.TrimStart();
-        return trimmed.StartsWith('{') || trimmed.StartsWith('[');
+        return content.TrimStart().StartsWith('{');
     }
 
     /// <summary>
