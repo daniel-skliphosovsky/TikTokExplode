@@ -2,7 +2,7 @@ name: Release
 
 on:
   push:
-    tags: ['v*']
+    branches: [main]
 
 permissions:
   contents: write
@@ -17,33 +17,26 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.0.x'
-          cache: true
-          cache-dependency-path: '**/packages.lock.json'
 
-      - name: Install ILRepack tool
-        run: dotnet tool install -g dotnet-ilrepack
-
-      - name: Restore dependencies
-        run: dotnet restore
-
-      - name: Build
-        run: dotnet build --configuration Release --no-restore
-
-      - name: Test
-        run: dotnet test --configuration Release --no-build --verbosity normal
-
-      - name: Publish (ILRepack merges Domain + Infrastructure into TikTokExplode.dll)
-        run: dotnet publish src/TikTokExplode/TikTokExplode.csproj --configuration Release --no-build --output publish
-
-      - name: List publish files
-        run: ls -la publish/
-
-      - name: Create Release with single DLL
+      - name: Publish
         run: |
-          gh release create "${{ github.ref_name }}" \
-            publish/TikTokExplode.dll \
-            --generate-notes \
-            --title "${{ github.ref_name }}" \
-            --latest
+          dotnet publish src/TikTokExplode/TikTokExplode.csproj -c Release -o publish
+          dll_count=$(find publish -maxdepth 1 -name '*.dll' | wc -l | tr -d ' ')
+          echo "dll files in publish: $dll_count"
+          if [ "$dll_count" -ne 1 ]; then
+            echo "Expected exactly 1 dll in publish, found $dll_count"
+            exit 1
+          fi
+          ls -la publish
+
+      - name: Delete previous release/tag
+        run: gh release delete v1.4.0 --yes --cleanup-tag 2>/dev/null || true
         env:
           GH_TOKEN: ${{ github.token }}
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.4.0
+          files: publish/TikTokExplode.dll
+          generate_release_notes: true

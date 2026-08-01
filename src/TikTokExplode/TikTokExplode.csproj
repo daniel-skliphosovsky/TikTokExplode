@@ -1,13 +1,16 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <VersionPrefix>1.4.0</VersionPrefix>
+    <Authors>daniel-skliphosovsky</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/daniel-skliphosovsky/TikTokExplode</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\TikTokExplode.Domain\TikTokExplode.Domain.csproj" />
-    <ProjectReference Include="..\TikTokExplode.Infrastructure\TikTokExplode.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <Import Project="ilrepack.targets" Condition="Exists('ilrepack.targets')" />
 
 </Project>
