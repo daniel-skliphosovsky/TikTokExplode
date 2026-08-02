@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text.RegularExpressions;
 using TikTokExplode.Exceptions;
 using TikTokExplode.Publications;
@@ -9,8 +10,6 @@ namespace TikTokExplode;
 /// </summary>
 internal static partial class UrlHelper
 {
-    private static readonly HttpClient RedirectClient = CreateRedirectClient();
-
     [GeneratedRegex(@"https?:\/\/(?:www\.)?(?:tiktok\.com|vm\.tiktok\.com|vt\.tiktok\.com)\/.+", RegexOptions.Compiled | RegexOptions.IgnoreCase)]
     private static partial Regex TikTokUrlRegex();
 
@@ -47,35 +46,41 @@ internal static partial class UrlHelper
         return fullUrl;
     }
 
+    /// <summary>
+    /// Resolves a (possibly short) TikTok url to its final form by following
+    /// redirects. Restored from the known-good v1.3.1 mechanism: HttpWebRequest
+    /// with auto-redirect, returning the final ResponseUri. Retried a few times
+    /// because short-link resolution is slow and occasionally times out.
+    /// </summary>
     public static async Task<string> ResolveAsync(string url, CancellationToken ct = default)
     {
-        try
+        for (int attempt = 0; attempt < 3; attempt++)
         {
-            using var request = new HttpRequestMessage(HttpMethod.Get, url);
-            using HttpResponseMessage response = await RedirectClient
-                .SendAsync(request, HttpCompletionOption.ResponseHeadersRead, ct)
-                .ConfigureAwait(false);
+            try
+            {
+#pragma warning disable SYSLIB0014 // v1.3.1 short-link resolution mechanism
+                var request = (HttpWebRequest)WebRequest.Create(url);
+                request.AllowAutoRedirect = true;
+                request.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
+                request.Timeout = 100_000;
 
-            return response.RequestMessage?.RequestUri?.AbsoluteUri ?? url;
+                using WebResponse response = await request.GetResponseAsync().WaitAsync(ct).ConfigureAwait(false);
+#pragma warning restore SYSLIB0014
+                return response.ResponseUri?.AbsoluteUri ?? url;
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException || ex is TaskCanceledException { InnerException: TimeoutException })
+            {
+                // Transient short-link failures: try again, then return the
+                // url as-is (validated by the caller) if all attempts fail.
+            }
         }
-        catch (Exception ex) when (ex is not OperationCanceledException || ex is TaskCanceledException { InnerException: TimeoutException })
-        {
-            // Non-TikTok or unreachable urls are returned as-is and validated later.
-            return url;
-        }
+
+        return url;
     }
 
     public static string? ExtractAwemeId(string fullUrl)
     {
         Match match = AwemeIdRegex().Match(fullUrl);
         return match.Success ? match.Groups[2].Value : null;
-    }
-
-    private static HttpClient CreateRedirectClient()
-    {
-        var client = new HttpClient(new HttpClientHandler { AllowAutoRedirect = true });
-        client.Timeout = TimeSpan.FromSeconds(60);
-        client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36");
-        return client;
     }
 }

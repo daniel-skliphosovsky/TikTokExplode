@@ -100,7 +100,7 @@ internal static class ApiResponseParser
         if (dto is null)
             throw new ValidationException("Failed to extract soundtrack data from response.");
 
-        ulong.TryParse(dto.Id, out ulong id);
+        ulong.TryParse(dto.Id.ToString(), out ulong id);
 
         return new Soundtrack
         {

@@ -107,7 +107,7 @@ internal class DisplayImageDto
 internal class MusicDto
 {
     [JsonPropertyName("id")]
-    public string Id { get; set; } = string.Empty;
+    public long Id { get; set; }
 
     [JsonPropertyName("title")]
     public string Title { get; set; } = string.Empty;
