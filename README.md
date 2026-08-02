@@ -10,27 +10,42 @@
 </h6>
 
 <p align="center">
-    <a href="https://github.com/daniel-skliphosovsky/TikTokExplode/releases">
-      <img src="https://img.shields.io/badge/Releases-Download-blue?style=for-the-badge&logo=github" alt="Releases">
+    <a href="https://github.com/daniel-skliphosovsky/TikTokExplode/actions/workflows/ci.yml">
+      <img src="https://img.shields.io/badge/CI-Passing-brightgreen?style=for-the-badge&logo=github" alt="CI">
+    </a>
+    <a href="https://github.com/daniel-skliphosovsky/TikTokExplode/blob/main/LICENSE">
+      <img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge" alt="License">
+    </a>
+    <a href="https://www.nuget.org/packages/TikTokExplode">
+      <img src="https://img.shields.io/badge/NuGet-Package-blue?style=for-the-badge" alt="NuGet">
     </a>
 </p>
 
 ## Installation
 
-1. **Download DLL**  [TikTokExplode.dll](https://github.com/daniel-skliphosovsky/TikTokExplode/releases/download/v1.4.7/TikTokExplode.dll)
+### .NET CLI
 
-2. **Add to project**  
-   ```bash
-   # .NET CLI
-   dotnet add reference path/to/TikTokExplode.dll --project YourProject.csproj
-   
-   # Visual Studio
-   Project → Add → Reference → Browse → select TikTokExplode.dll → Add
-   ```
-3. **Add namespace**
-   ```csharp
-   using TikTokExplode;
-   ```
+```bash
+dotnet add package TikTokExplode
+```
+
+### Visual Studio
+
+Project → Add → NuGet Package → Search for `TikTokExplode`
+
+### Manual Reference
+
+If you prefer to use the DLL directly:
+
+```bash
+dotnet add reference path/to/TikTokExplode.dll --project YourProject.csproj
+```
+
+### Add namespace
+
+```csharp
+using TikTokExplode;
+```
 
 
 ## Usage
@@ -223,8 +238,8 @@ catch(Exception)
 ```
 
 ### Downloading using Progress and CancellationToken
-```csharp
 
+```csharp
 // Example with Progress
 
 using TikTokExplode;
@@ -240,10 +255,9 @@ Progress<double> progress = new Progress<double>(percent =>
 });
 
 await TikTok.DownloadVideoAsync(video, "path", progress: progress);
-
 ```
-```csharp
 
+```csharp
 // Example with CancellationToken
 
 using TikTokExplode;
@@ -268,6 +282,7 @@ catch(OperationCanceledException)
 ```
 
 ### Getting type of TikTokPublication by link
+
 ```csharp
 using TikTokExplode;
 using TikTokExplode.Publications;
@@ -301,7 +316,8 @@ switch (publicationType)
 }
 ```
 
-# Possible problems
+## Possible problems
+
 If the post you linked to is private (or does not exist), the program will download another random video (This is due to TikTok API). So sometimes after downloading, you may find a completely different video/photo or get data from a completely different post.
 
 
