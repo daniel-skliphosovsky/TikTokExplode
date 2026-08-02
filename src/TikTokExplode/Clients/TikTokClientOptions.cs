@@ -48,9 +48,11 @@ public class TikTokClientOptions
     };
 
     /// <summary>
-    /// HTTP request timeout in seconds.
+    /// HTTP request timeout in seconds. Kept high (100s) to match the default
+    /// HttpClient timeout of the known-good v1.3.1 client; TikTok's API can be
+    /// slow on the first hit of a cold host.
     /// </summary>
-    public int TimeoutSeconds { get; set; } = 30;
+    public int TimeoutSeconds { get; set; } = 100;
 
     /// <summary>
     /// Number of retries for transient failures (rate limits, 5xx, network errors).
@@ -65,6 +67,7 @@ public class TikTokClientOptions
     /// <summary>
     /// Minimum interval in milliseconds between TikTok API calls.
     /// Helps avoid triggering rate limiting on bursty callers.
+    /// Kept soft (1000ms) so a single slow request does not compound delays.
     /// </summary>
-    public int MinRequestIntervalMs { get; set; } = 1500;
+    public int MinRequestIntervalMs { get; set; } = 1000;
 }
