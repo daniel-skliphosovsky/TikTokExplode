@@ -56,9 +56,7 @@ For feature requests, please:
 4. Ensure tests pass before submitting
 5. Review your changes before opening the PR
 
-## Code of Conduct
 
-Please refer to [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) for our community guidelines.
 
 ## Style Guidelines
 

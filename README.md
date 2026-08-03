@@ -21,6 +21,10 @@
     </a>
 </p>
 
+## Description
+
+TikTokExplode is a .NET library that provides access to TikTok's API for retrieving publication metadata, author information, statistics, soundtracks, videos, and images. It handles short-link resolution, retries with fresh user agents, and supports downloading content locally.
+
 ## Installation
 
 ### .NET CLI
@@ -47,278 +51,61 @@ dotnet add reference path/to/TikTokExplode.dll --project YourProject.csproj
 using TikTokExplode;
 ```
 
-
 ## Usage
 
-First, create an instance of TikTokClient:
+### Basic client setup
 
 ```csharp
 TikTokClient client = new TikTokClient();
 ```
 
-### Retrieving publications
-
-#### Retrieving publication metadata and components
+### Get publication data
 
 ```csharp
 using TikTokExplode;
 using TikTokExplode.Publications;
-using TikTokExplode.Publications.Videos;
-using TikTokExplode.Publications.Images;
-using TikTokExplode.Publications.Authors;
-using TikTokExplode.Publications.Statistics;
-using TikTokExplode.Publications.Soundtracks;
 
-TikTokClient TikTok = new TikTokClient();
-
-Publication publication = await TikTok.Publications.GetAsync("https://publication_url");
-
-Author author = publication.Author;
-Stats statistics = publication.Statistics;
-Soundtrack soundtrack = publication.Soundtrack;
-Video video = publication.Video;
-List<Image> images = publication.Images;
-
-bool isAds = publication.IsAds;
-string id = publication.Id;
-string description = publication.Description;
+TikTokClient client = new TikTokClient();
+Publication publication = await client.Publications.GetAsync("https://www.tiktok.com/@user/video/123456");
 ```
 
-### Obtaining components separately
-
-#### Retrieving publication author
-
-```csharp
-using TikTokExplode;
-using TikTokExplode.Publications.Authors;
-
-TikTokClient TikTok = new TikTokClient();
-
-Author author = await TikTok.Publications.Authors.GetAsync("https://publication_url");
-
-bool isVerified = author.IsVerified;
-string nickname = author.Nickname;
-string region = author.Region;
-string thumbAvatarUrl = author.ThumbAvatarUrl;
-string mediumAvatarUrl = author.MediumAvatarUrl;
-```
-
-#### Retrieving publication statistics 
-
-```csharp
-using TikTokExplode;
-using TikTokExplode.Publications.Statistics;
-
-TikTokClient TikTok = new TikTokClient();
-
-Stats statistics = await TikTok.Publications.Statistics.GetAsync("https://publication_url");
-
-ulong commentCount = statistics.CommentCount;
-ulong playCount = statistics.PlayCount;
-ulong diggCount = statistics.DiggCount;
-ulong downloadCount = statistics.DownloadCount;
-ulong forwardCount = statistics.ForwardCount;
-ulong shareCount = statistics.ShareCount;
-ulong repostCount = statistics.RepostCount;
-```
-
-#### Retrieving publication soundtrack
-
-```csharp
-using TikTokExplode;
-using TikTokExplode.Publications.Soundtracks;
-
-TikTokClient TikTok = new TikTokClient();
-
-Soundtrack soundtrack = await TikTok.Publications.Soundtracks.GetAsync("https://publication_url");
-
-ulong id = soundtrack.Id;
-string authorNickname = soundtrack.Author;
-string title = soundtrack.Title;
-string soundUrl = soundtrack.SoundUrl;
-string largeCoverUrl = soundtrack.LargeCoverUrl;
-string mediumCoverUrl = soundtrack.MediumCoverUrl;
-string thumbCoverUrl = soundtrack.ThumbCoverUrl;
-```
-
-#### Retrieving publication video
+### Download video
 
 ```csharp
 using TikTokExplode;
 using TikTokExplode.Publications.Videos;
 
-TikTokClient TikTok = new TikTokClient();
-
-Video video = await TikTok.Publications.Videos.GetAsync("https://publication_url");
-
-string videoUrl = video.Url;
-int width = video.Width;
-int height = video.Height;
-ulong duration = video.Duration;
+TikTokClient client = new TikTokClient();
+Video video = await client.Publications.Videos.GetAsync("https://www.tiktok.com/@user/video/123456");
+await client.DownloadVideoAsync(video, "/path/to/save", "video.mp4");
 ```
 
-#### Retrieving publication images
+### Download images
 
 ```csharp
 using TikTokExplode;
 using TikTokExplode.Publications.Images;
 
-TikTokClient TikTok = new TikTokClient();
-
-List<Image> images = await TikTok.Publications.Images.GetAsync("https://publication_url");
-
-foreach (Image image in images)
-{
-  string imageUrl = image.Url;
-  int width = image.Width;
-  int height = image.Height;
-}
+TikTokClient client = new TikTokClient();
+List<Image> images = await client.Publications.Images.GetAsync("https://www.tiktok.com/@user/photo/123456");
+await client.DownloadImagesAsync(images, "/path/to/save");
 ```
 
-### Downloading publication video
-
-```csharp
-using TikTokExplode;
-using TikTokExplode.Publications.Videos;
-
-TikTokClient TikTok = new TikTokClient();
-
-Video video = await TikTok.Publications.Videos.GetAsync("https://publication_url");
-
-await TikTok.DownloadVideoAsync(video, "path", "file_name");
-// file_name option is not required. If you not set it file will be named publication_id
-```
-
-### Downloading publication image
-
-```csharp
-using TikTokExplode;
-using TikTokExplode.Publications.Images;
-
-TikTokClient TikTok = new TikTokClient();
-
-List<Image> images = await TikTok.Publications.Images.GetAsync("https://publication_url");
-
-//As example: download third image in publication
-await TikTok.DownloadImageAsync(images[2], "path", "file_name");
-// file_name option is not required. If you not set it file will be named publication_id
-```
-
-
-### Downloading publication images
-
-```csharp
-using TikTokExplode;
-using TikTokExplode.Publications.Images;
-
-TikTokClient TikTok = new TikTokClient();
-
-List<Image> images = await TikTok.Publications.Images.GetAsync("https://publication_url");
-
-await TikTok.DownloadImagesAsync(images, "path", $"file_name");
-// file_name option is not required. If you not set it file will be named publication_id
-
-```
-### Working with TikTokExplode exceptions
-```csharp
-using TikTokExplode.Exceptions;
-
-try
-{
-    //some code
-}
-catch(TikTokExplodeException)
-{
-    //triggered when an exception is thrown by TikTokExplode
-}
-catch(Exception)
-{
-    //other exceptions
-}
-```
-
-### Downloading using Progress and CancellationToken
-
-```csharp
-// Example with Progress
-
-using TikTokExplode;
-using TikTokExplode.Publications.Videos;
-
-TikTokClient TikTok = new TikTokClient();
-
-Video video = await TikTok.Publications.Videos.GetAsync("https://publication_url");
-
-Progress<double> progress = new Progress<double>(percent =>
-{
-    //triggered when progress value changed
-});
-
-await TikTok.DownloadVideoAsync(video, "path", progress: progress);
-```
-
-```csharp
-// Example with CancellationToken
-
-using TikTokExplode;
-using TikTokExplode.Publications.Videos;
-
-TikTokClient TikTok = new TikTokClient();
-
-Video video = await TikTok.Publications.Videos.GetAsync("https://publication_url");
-
-using CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-
-// for cancel downloading -> cancellationTokenSource.Cancel();
-
-try
-{
-    await TikTok.DownloadVideoAsync(video, "path", cancellationToken: cancellationTokenSource.Token);
-}
-catch(OperationCanceledException)
-{
-    //triggered when downloading has been canceled
-}
-```
-
-### Getting type of TikTokPublication by link
+### Check publication type
 
 ```csharp
 using TikTokExplode;
 using TikTokExplode.Publications;
-using TikTokExplode.Publications.Videos;
-using TikTokExplode.Publications.Images;
 
-TikTokClient TikTok = new TikTokClient();
-
-string url = "https://publication_url";
-
-PublicationClient.PublicationType publicationType = await PublicationClient.GetPublicationType(url);
-
-switch (publicationType)
-{
-    case PublicationClient.PublicationType.Images:
-        //...
-        List<Image> images = await TikTok.Publications.Images.GetAsync(url);
-        //...
-        break;
-
-    case PublicationClient.PublicationType.Video:
-        //...
-        Video video = await TikTok.Publications.Videos.GetAsync(url);
-        //...
-        break;
-
-    case PublicationClient.PublicationType.Unknown:
-    default:
-        // Link is incorrect
-        break;
-}
+TikTokClient client = new TikTokClient();
+string url = "https://www.tiktok.com/@user/video/123456";
+PublicationType type = await PublicationClient.GetPublicationType(url);
 ```
+
+## Contributing
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for contribution guidelines.
 
 ## Possible problems
 
 If the post you linked to is private (or does not exist), the program will download another random video (This is due to TikTok API). So sometimes after downloading, you may find a completely different video/photo or get data from a completely different post.
-
-
-
