@@ -16,9 +16,6 @@
     <a href="https://github.com/daniel-skliphosovsky/TikTokExplode/blob/main/LICENSE">
       <img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge" alt="License">
     </a>
-    <a href="https://www.nuget.org/packages/TikTokExplode">
-      <img src="https://img.shields.io/badge/NuGet-Package-blue?style=for-the-badge" alt="NuGet">
-    </a>
 </p>
 
 ## Description
@@ -27,22 +24,16 @@ TikTokExplode is a .NET library that provides access to TikTok's API for retriev
 
 ## Installation
 
-### .NET CLI
+Download `TikTokExplode.dll` from the [latest GitHub release](https://github.com/daniel-skliphosovsky/TikTokExplode/releases/latest) and add it as a reference in your project.
 
-```bash
-dotnet add package TikTokExplode
-```
+For an SDK-style project, add the reference to your `.csproj`:
 
-### Visual Studio
-
-Project → Add → NuGet Package → Search for `TikTokExplode`
-
-### Manual Reference
-
-If you prefer to use the DLL directly:
-
-```bash
-dotnet add reference path/to/TikTokExplode.dll --project YourProject.csproj
+```xml
+<ItemGroup>
+  <Reference Include="TikTokExplode">
+    <HintPath>path/to/TikTokExplode.dll</HintPath>
+  </Reference>
+</ItemGroup>
 ```
 
 ### Add namespace
